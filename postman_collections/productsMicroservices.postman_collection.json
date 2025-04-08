@@ -1,0 +1,416 @@
+{
+	"info": {
+		"_postman_id": "d826fbb2-1be5-4f4f-b486-ee407d784a09",
+		"name": "productsMicroservices",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "7062254"
+	},
+	"item": [
+		{
+			"name": "create-product",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY4NzQ4NCwiZXhwIjoxNzQzNjkxMDg0fQ.chd3gp6Yio04FFLb6mx6i2RqMR5vjJ8WqDLsL6VIOaU"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ThumnailImage\": \"https://www.appstudio.ca/blog/wp-content/uploads/2020/09/Ecommerce-Business.jpg\",\r\n    \"Name\": \"Category1\",\r\n    \"Slug\": \"slug1\",\r\n    \"Status\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3003/api/categories/create-category"
+			},
+			"response": []
+		},
+		{
+			"name": "getAllProducts",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzYxNDY2OSwiZXhwIjoxNzQzNjE4MjY5fQ.yHEsWssHbGwvuJ6qj9zbLWLujYVWmSE23kjeRXBdmXY"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:3003/api/products/getAll"
+			},
+			"response": []
+		},
+		{
+			"name": "bulk upload",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/kolak/OneDrive/Desktop/Book1.xlsx"
+						}
+					]
+				},
+				"url": "http://localhost:3003/api/products/upload/excel"
+			},
+			"response": []
+		},
+		{
+			"name": "delete-product",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY4NzQ4NCwiZXhwIjoxNzQzNjkxMDg0fQ.chd3gp6Yio04FFLb6mx6i2RqMR5vjJ8WqDLsL6VIOaU"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3003/api/products/product/3"
+			},
+			"response": []
+		},
+		{
+			"name": "update-product",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY4NzQ4NCwiZXhwIjoxNzQzNjkxMDg0fQ.chd3gp6Yio04FFLb6mx6i2RqMR5vjJ8WqDLsL6VIOaU"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Id\": 3,\r\n    \"ThumnailImage\": \"https://www.appstudio.ca/blog/wp-content/uploads/2020/09/Ecommerce-Business.jpg\",\r\n    \"Name\": \"category1\",\r\n    \"Slug\": \"slug1\",\r\n    \"Status\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3003/api/categories/update-category"
+			},
+			"response": []
+		},
+		{
+			"name": "getAllCategories",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY4NzQ4NCwiZXhwIjoxNzQzNjkxMDg0fQ.chd3gp6Yio04FFLb6mx6i2RqMR5vjJ8WqDLsL6VIOaU"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:3003/api/categories/getAll"
+			},
+			"response": []
+		},
+		{
+			"name": "create-subcategory",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY4NzQ4NCwiZXhwIjoxNzQzNjkxMDg0fQ.chd3gp6Yio04FFLb6mx6i2RqMR5vjJ8WqDLsL6VIOaU"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ThumnailImage\": \"https://www.appstudio.ca/blog/wp-content/uploads/2020/09/Ecommerce-Business.jpg\",\r\n    \"Name\": \"Category1\",\r\n    \"Slug\": \"slug1\",\r\n    \"Status\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3003/api/categories/create-category"
+			},
+			"response": []
+		},
+		{
+			"name": "update-subcategory",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY4NzQ4NCwiZXhwIjoxNzQzNjkxMDg0fQ.chd3gp6Yio04FFLb6mx6i2RqMR5vjJ8WqDLsL6VIOaU"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Id\": 1,\r\n    \"ThumnailImage\": \"https://www.appstudio.ca/blog/wp-content/uploads/2020/09/Ecommerce-Business12.jpg\",\r\n    \"Name\": \"subCategory2\",\r\n    \"Category\": \"2\",\r\n    \"Slug\": \"slug2\",\r\n    \"Status\": \"0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3003/api/sub-categories/update-subcategory"
+			},
+			"response": []
+		},
+		{
+			"name": "getAllSubCategories",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY4NzQ4NCwiZXhwIjoxNzQzNjkxMDg0fQ.chd3gp6Yio04FFLb6mx6i2RqMR5vjJ8WqDLsL6VIOaU"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:3003/api/sub-categories/getAll"
+			},
+			"response": []
+		},
+		{
+			"name": "subCategory/1",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY4NzQ4NCwiZXhwIjoxNzQzNjkxMDg0fQ.chd3gp6Yio04FFLb6mx6i2RqMR5vjJ8WqDLsL6VIOaU"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:3003/api/sub-categories/subCategory/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete subCategory/1",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY4NzQ4NCwiZXhwIjoxNzQzNjkxMDg0fQ.chd3gp6Yio04FFLb6mx6i2RqMR5vjJ8WqDLsL6VIOaU"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:3003/api/sub-categories/subCategory/1"
+			},
+			"response": []
+		},
+		{
+			"name": "delete-category",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY4NzQ4NCwiZXhwIjoxNzQzNjkxMDg0fQ.chd3gp6Yio04FFLb6mx6i2RqMR5vjJ8WqDLsL6VIOaU"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3003/api/categories/category/3"
+			},
+			"response": []
+		},
+		{
+			"name": "create-category",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY5NTY1NSwiZXhwIjoxNzQzNjk5MjU1fQ.NLXCrUHApCjAF9-MtLVHL08dLKDXx8BNKRXwBO9NpF4"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ThumnailImage\": \"https://www.appstudio.ca/blog/wp-content/uploads/2020/09/Ecommerce-Business.jpg\",\r\n    \"Name\": \"ChildCategory1\",\r\n    \"Category\": \"2\",\r\n    \"SubCategory\": \"3\",\r\n    \"Slug\": \"slug1\",\r\n    \"Status\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3003/api/categories/create-category"
+			},
+			"response": []
+		},
+		{
+			"name": "create-child-category",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY5NTY1NSwiZXhwIjoxNzQzNjk5MjU1fQ.NLXCrUHApCjAF9-MtLVHL08dLKDXx8BNKRXwBO9NpF4"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ThumnailImage\": \"https://www.appstudio.ca/blog/wp-content/uploads/2020/09/Ecommerce-Business.jpg\",\r\n    \"Name\": \"ChildCategory2\",\r\n    \"Category\": \"1\",\r\n    \"SubCategory\": \"2\",\r\n    \"Slug\": \"slug2\",\r\n    \"Status\": \"0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3003/api/child-categories/create-child-category"
+			},
+			"response": []
+		},
+		{
+			"name": "create-brand",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY5NTY1NSwiZXhwIjoxNzQzNjk5MjU1fQ.NLXCrUHApCjAF9-MtLVHL08dLKDXx8BNKRXwBO9NpF4"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ThumnailImage\": \"https://www.appstudio.ca/blog/wp-content/uploads/2020/09/Ecommerce-Business.jpg\",\r\n    \"Name\": \"Brand\",\r\n    \"Slug\": \"slug1\",\r\n    \"Status\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3003/api/brands/create-brand"
+			},
+			"response": []
+		},
+		{
+			"name": "update-child-category",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY5NTY1NSwiZXhwIjoxNzQzNjk5MjU1fQ.NLXCrUHApCjAF9-MtLVHL08dLKDXx8BNKRXwBO9NpF4"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Id\": 1,\r\n    \"ThumnailImage\": \"https://www.appstudio.ca/blog/wp-content/uploads/2020/09/Ecommerce-Business.jpg\",\r\n    \"Name\": \"ChildCategory22\",\r\n    \"Category\": \"1\",\r\n    \"SubCategory\": \"1\",\r\n    \"Slug\": \"slug\",\r\n    \"Status\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3003/api/child-categories/update-child-category"
+			},
+			"response": []
+		},
+		{
+			"name": "update-brand",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY5NTY1NSwiZXhwIjoxNzQzNjk5MjU1fQ.NLXCrUHApCjAF9-MtLVHL08dLKDXx8BNKRXwBO9NpF4"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Id\": 1,\r\n    \"ThumnailImage\": \"https://www.appstudio.ca/blog/wp-content/uploads/2020/09/Ecommerce-Business.jpg\",\r\n    \"Name\": \"Brand1\",\r\n    \"Slug\": \"slug2\",\r\n    \"Status\": \"0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3003/api/brands/update-brand"
+			},
+			"response": []
+		},
+		{
+			"name": "child-categories/getAll",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY5NTY1NSwiZXhwIjoxNzQzNjk5MjU1fQ.NLXCrUHApCjAF9-MtLVHL08dLKDXx8BNKRXwBO9NpF4"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:3003/api/child-categories/getAll"
+			},
+			"response": []
+		},
+		{
+			"name": "brands/getAll",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY5NTY1NSwiZXhwIjoxNzQzNjk5MjU1fQ.NLXCrUHApCjAF9-MtLVHL08dLKDXx8BNKRXwBO9NpF4"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:3003/api/brands/getAll"
+			},
+			"response": []
+		},
+		{
+			"name": "delete/child-category/2",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGhvbmVudW1iZXIiOiIyMTIzMTMxMjMiLCJwYXNzd29yZCI6InRlc3Q1In0sImlhdCI6MTc0MzY5NTY1NSwiZXhwIjoxNzQzNjk5MjU1fQ.NLXCrUHApCjAF9-MtLVHL08dLKDXx8BNKRXwBO9NpF4"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:3003/api/child-categories/child-category/2"
+			},
+			"response": []
+		}
+	]
+}
