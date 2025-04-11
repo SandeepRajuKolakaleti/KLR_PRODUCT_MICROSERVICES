@@ -1,4 +1,5 @@
 import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { HighlightDto, SpecificationDto } from "./dto/create-product.dto";
 
 @Entity()
 export class ProductEntity {
@@ -49,7 +50,7 @@ export class ProductEntity {
     LongDescription!: string;
 
     @Column({ type: "json", nullable: true })
-    Highlight!: { [key: string]: boolean };
+    Highlight!: HighlightDto;
 
     @Column()
     Status!: string; 
@@ -62,7 +63,7 @@ export class ProductEntity {
 
     // Store specifications as a JSON object
     @Column({ type: "json", nullable: true })
-    Specifications!: {key: string; specification: string }[];
+    Specifications!: SpecificationDto[];
 
     @Column()
     Vendor!: string;

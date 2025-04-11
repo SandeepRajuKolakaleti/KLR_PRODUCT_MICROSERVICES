@@ -10,7 +10,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const LISTEN_PORT = 3003;
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true, // <-- important
+    whitelist: true,
+    forbidNonWhitelisted: true,
+  }));
   app.enableCors();
   const options = new DocumentBuilder()
     .setTitle('API Prdoucts microservices')

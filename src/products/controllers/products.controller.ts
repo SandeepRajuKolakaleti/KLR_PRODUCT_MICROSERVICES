@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, Param, Delete, ParseFilePipe, FileTypeValidator } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ProductsService } from '../services/products.service';
 import { Observable } from 'rxjs';
@@ -14,9 +14,28 @@ export class ProductsController {
 
     @UseGuards(JwtAuthGuard)
     @Post("create-product")
-    createProduct(@Body() createdProductDto: CreateProductDto): Observable<ProductI> {
+    async createProduct(@Body() createdProductDto: CreateProductDto): Promise<Observable<ProductI>> {
         return this.productService.createProducts(createdProductDto);
         // test app constants - AppConstants.app.xyz
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('upload')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadFile(@UploadedFile(
+        new ParseFilePipe({
+            validators: [
+                new FileTypeValidator({ fileType: 'image/jpeg'})
+            ]
+        })
+    ) file: Multer.File) {
+        // console.log("upload data:", file);
+        return this.productService.upload(file.originalname, file.buffer).then((data) => {
+            console.log(data);
+            return {
+                url: data
+            };
+        });
     }
 
     @UseGuards(JwtAuthGuard)

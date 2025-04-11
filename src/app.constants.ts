@@ -8,6 +8,8 @@ export class AppConstants {
             expiryTime: 3600,
             type: 'JWT' 
         },
+        bucket: 'klruploads',
+        key: 'uploads'
     };
 
 }

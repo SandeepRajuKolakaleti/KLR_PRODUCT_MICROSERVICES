@@ -6,14 +6,60 @@ import { Repository } from 'typeorm';
 import { from, map, Observable, of, switchMap } from 'rxjs';
 import { ProductI } from '../models/product.interface';
 import * as XLSX from 'xlsx';
-
+import axios from 'axios';
+import { ConfigService } from '@nestjs/config';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { AppConstants } from 'src/app.constants';
 
 @Injectable()
 export class ProductsService {
+    public readonly s3Client;
+    
     constructor(
         @InjectRepository(ProductEntity)
         private productRepository: Repository<ProductEntity>,
-    ) {}
+        private configService: ConfigService
+    ) {
+        this.s3Client = new S3Client({
+            region: configService.get('S3_REGION'),
+            credentials: {
+              accessKeyId: configService.get('S3_ACCESS_KEY_ID')|| '',
+              secretAccessKey: configService.get('S3_SECRET_ACCESS_KEY') || '',
+            },
+        });
+    }
+
+    async upload(fileName: string, file:Buffer) {
+        const region = this.configService.get('S3_REGION');
+        const folder = AppConstants.app.key;
+        const s3Key = `${folder}/${fileName}`;
+        await this.s3Client.send(
+            new PutObjectCommand({
+                Bucket: AppConstants.app.bucket,
+                Key: s3Key,
+                Body: file
+            })
+        );
+        return await this.imageUrlToBase64(`https://${AppConstants.app.bucket}.s3.${region}.amazonaws.com/${s3Key}`)
+        .then((base64) => {
+            // console.log("base64", base64);
+            return base64;
+        })
+        .catch(console.error);
+    }
+
+    async imageUrlToBase64(url: string): Promise<string> {
+        const response = await axios.get(url, {
+          responseType: 'arraybuffer',
+        });
+      
+        const base64 = Buffer.from(response.data, 'binary').toString('base64');
+      
+        // Optional: Get content-type for full data URI
+        const contentType = response.headers['content-type'];
+      
+        return `data:${contentType};base64,${base64}`;
+    }
 
     createProducts(createProductDto: CreateProductDto): Observable<ProductI> {
         return from(this.productRepository.save(createProductDto)).pipe(
