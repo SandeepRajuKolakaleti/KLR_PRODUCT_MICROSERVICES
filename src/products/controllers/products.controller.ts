@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, Param, Delete, ParseFilePipe, FileTypeValidator } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, Param, Delete, ParseFilePipe, FileTypeValidator, Req } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ProductsService } from '../services/products.service';
 import { Observable } from 'rxjs';
@@ -7,6 +7,7 @@ import { ProductI } from '../models/product.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Multer, diskStorage } from 'multer';
 import { extname } from 'path';
+import { Request } from 'express';
 
 @Controller('products')
 export class ProductsController {
@@ -14,15 +15,43 @@ export class ProductsController {
 
     @UseGuards(JwtAuthGuard)
     @Post("create-product")
-    async createProduct(@Body() createdProductDto: CreateProductDto): Promise<Observable<ProductI>> {
-        return this.productService.createProducts(createdProductDto);
+    @UseInterceptors(FileInterceptor('file'))
+    async createProduct(@UploadedFile() file: Multer.File, @Body() createdProductDto: any,@Req() request: Request): Promise<Observable<ProductI>> {
+        // console.log(file, createdProductDto, request.body);
+        return await this.productService.upload(file.originalname, file.buffer).then((data) => {
+            console.log(data);
+            createdProductDto.ThumnailImage = data;
+            const parsedDto: CreateProductDto = {
+                ...createdProductDto,
+                Category: Number(createdProductDto.Category),
+                SubCategory: Number(createdProductDto.SubCategory),
+                ChildCategory: Number(createdProductDto.ChildCategory),
+                Brand: Number(createdProductDto.Brand),
+                Price: Number(createdProductDto.Price),
+                OfferPrice: Number(createdProductDto.OfferPrice),
+                StockQuantity: Number(createdProductDto.StockQuantity),
+                Weight: Number(createdProductDto.Weight),
+                Highlight: JSON.parse(createdProductDto.Highlight),
+                Specifications: JSON.parse(createdProductDto.Specifications),
+            };
+            return this.productService.createProducts(parsedDto);
+        });
+        
         // test app constants - AppConstants.app.xyz
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('uploadImgToBase64')
+    async base64(@Body() img: any) {
+        console.log(img);
+        return this.productService.getImageUrlToBase64(img.url);
     }
 
     @UseGuards(JwtAuthGuard)
     @Post('upload')
     @UseInterceptors(FileInterceptor('file'))
-    async uploadFile(@UploadedFile(
+    async uploadFile(
+    @UploadedFile(
         new ParseFilePipe({
             validators: [
                 new FileTypeValidator({ fileType: 'image/jpeg'})

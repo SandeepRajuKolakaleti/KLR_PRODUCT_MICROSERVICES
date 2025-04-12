@@ -30,7 +30,6 @@ export class ProductsService {
     }
 
     async upload(fileName: string, file:Buffer) {
-        const region = this.configService.get('S3_REGION');
         const folder = AppConstants.app.key;
         const s3Key = `${folder}/${fileName}`;
         await this.s3Client.send(
@@ -40,7 +39,12 @@ export class ProductsService {
                 Body: file
             })
         );
-        return await this.imageUrlToBase64(`https://${AppConstants.app.bucket}.s3.${region}.amazonaws.com/${s3Key}`)
+        // await this.getImageUrlToBase64(s3Key)
+        return s3Key;
+    }
+
+    async getImageUrlToBase64(s3Key) {
+        return await this.imageUrlToBase64(`https://${AppConstants.app.bucket}.s3.${this.configService.get('S3_REGION')}.amazonaws.com/${s3Key}`)
         .then((base64) => {
             // console.log("base64", base64);
             return base64;
