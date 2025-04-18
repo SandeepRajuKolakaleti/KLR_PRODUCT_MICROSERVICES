@@ -13,7 +13,7 @@ export class CreateChildCategoryDto {
     @IsString()
     Slug!: string;
     @IsString()
-    Status!: string;
+    Status!: boolean;
 }
 
 export class UpdateChildCategoryDto extends CreateChildCategoryDto {

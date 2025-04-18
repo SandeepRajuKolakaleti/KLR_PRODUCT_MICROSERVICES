@@ -16,6 +16,6 @@ export class BrandEntity {
     Slug!: string;
 
     @Column()
-    Status!: string;
+    Status!: boolean;
 
 }

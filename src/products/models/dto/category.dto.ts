@@ -9,7 +9,7 @@ export class CreateCategoryDto {
     @IsString()
     Slug!: string;
     @IsString()
-    Status!: string;
+    Status!: boolean;
 }
 
 export class UpdateCategoryDto extends CreateCategoryDto {

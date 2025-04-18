@@ -4,5 +4,5 @@ export interface SubCategoryI {
     Name: string;
     Category: number;
     Slug: string;
-    Status: string;
+    Status: boolean;
 }

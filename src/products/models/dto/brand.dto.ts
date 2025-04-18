@@ -9,7 +9,7 @@ export class CreateBrandDto {
     @IsString()
     Slug!: string;
     @IsString()
-    Status!: string;
+    Status!: boolean;
 }
 
 export class UpdateBrandDto extends CreateBrandDto {

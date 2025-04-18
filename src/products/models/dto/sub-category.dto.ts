@@ -11,7 +11,7 @@ export class CreateSubCategoryDto {
     @IsString()
     Slug!: string;
     @IsString()
-    Status!: string;
+    Status!: boolean;
 }
 
 export class UpdateSubCategoryDto extends CreateSubCategoryDto {

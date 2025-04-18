@@ -19,6 +19,6 @@ export class SubCategoryEntity {
     Slug!: string;
 
     @Column()
-    Status!: string; 
+    Status!: boolean; 
 
 }

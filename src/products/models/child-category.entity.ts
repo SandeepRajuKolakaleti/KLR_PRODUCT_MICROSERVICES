@@ -22,6 +22,6 @@ export class ChildCategoryEntity {
     Slug!: string;
 
     @Column()
-    Status!: string; 
+    Status!: boolean; 
 
 }
