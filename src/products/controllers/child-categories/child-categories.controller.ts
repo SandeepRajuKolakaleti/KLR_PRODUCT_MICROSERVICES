@@ -1,18 +1,25 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { ChildCategoryI } from '../../../products/models/child-category.interface';
 import { CreateChildCategoryDto, UpdateChildCategoryDto } from '../../../products/models/dto/child-category.dto';
 import { ChildCategoriesService } from '../../../products/services/child-categories/child-categories.service';
-
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Multer } from 'multer';
+import { ProductsService } from 'src/products/services/products.service';
 @Controller('child-categories')
 export class ChildCategoriesController {
-    constructor(private childCategoryService: ChildCategoriesService) {}
+    constructor(private childCategoryService: ChildCategoriesService, private productService: ProductsService) {}
 
     @UseGuards(JwtAuthGuard)
     @Post("create-child-category")
-    createChildCategory(@Body() createdChildCategoryDto: CreateChildCategoryDto): Observable<ChildCategoryI> {
-        return this.childCategoryService.create(createdChildCategoryDto);
+    @UseInterceptors(FileInterceptor('file'))
+    async createChildCategory(@UploadedFile() file: Multer.File, @Body() createdChildCategoryDto: CreateChildCategoryDto): Promise<Observable<ChildCategoryI>> {
+        return await this.productService.upload(file.originalname, file.buffer).then((data) => {
+            console.log(data);
+            createdChildCategoryDto.ThumnailImage = data;
+            return this.childCategoryService.create(createdChildCategoryDto);
+        });
         // test app constants - AppConstants.app.xyz
     }
 
