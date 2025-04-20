@@ -31,8 +31,22 @@ export class CategoriesController {
 
     @UseGuards(JwtAuthGuard)
     @Post('update-category')
-    async updateCategory(@Body() updatedCategoryDto: UpdateCategoryDto): Promise<Observable<CategoryI>> {
-        return this.categoryService.update(updatedCategoryDto);
+    @UseInterceptors(FileInterceptor('file'))
+    async updateCategory(@UploadedFile() file: Multer.File, @Body() updatedCategoryDto: UpdateCategoryDto, @Req() request: Request): Promise<Observable<CategoryI>> {
+        console.log(file);
+        if (typeof updatedCategoryDto.ThumnailImage === 'string' && updatedCategoryDto.ThumnailImage !== '')
+            return this.categoryService.update(updatedCategoryDto);
+        else {
+            if(file)
+                return await this.productService.upload(file.originalname, file.buffer).then((data) => {
+                    console.log(data);
+                    updatedCategoryDto.ThumnailImage = data;
+                    return this.categoryService.update(updatedCategoryDto);
+                });
+            else {
+                return this.categoryService.update(updatedCategoryDto);
+            }
+        }
         // AppConstants.app.xyz
     }
 
