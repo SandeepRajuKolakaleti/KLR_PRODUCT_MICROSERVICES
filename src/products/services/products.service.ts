@@ -47,7 +47,7 @@ export class ProductsService {
         return await this.imageUrlToBase64(`https://${AppConstants.app.bucket}.s3.${this.configService.get('S3_REGION')}.amazonaws.com/${s3Key}`)
         .then((base64) => {
             // console.log("base64", base64);
-            return base64;
+            return { img: base64 };
         })
         .catch(console.error);
     }
