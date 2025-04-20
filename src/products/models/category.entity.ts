@@ -16,6 +16,6 @@ export class CategoryEntity {
     Slug!: string;
 
     @Column()
-    Status!: boolean;
+    Status!: string;
 
 }

@@ -3,5 +3,5 @@ export interface BrandI {
     ThumnailImage: string;
     Name: string;
     Slug: string;
-    Status: boolean;
+    Status: string;
 }
