@@ -13,10 +13,10 @@ export class ChildCategoryEntity {
     Name!: string;
 
     @Column()
-    Category!: number;
+    Category!: string;
 
     @Column()
-    SubCategory!: number;
+    SubCategory!: string;
 
     @Column({unique: true})
     Slug!: string;

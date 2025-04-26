@@ -10,11 +10,11 @@ export class CreateChildCategoryDto {
     @Type(() => String)
     ThumnailImage!: string;
     @IsString()
-    @Type(() => Number)
-    Category!: number;
+    @Type(() => String)
+    Category!: string;
     @IsString()
-    @Type(() => Number)
-    SubCategory!: number;
+    @Type(() => String)
+    SubCategory!: string;
     @IsString()
     @Type(() => String)
     Slug!: string;
@@ -25,5 +25,6 @@ export class CreateChildCategoryDto {
 
 export class UpdateChildCategoryDto extends CreateChildCategoryDto {
     @IsNumber()
+    @Type(() => Number)
     Id?: number;
 }

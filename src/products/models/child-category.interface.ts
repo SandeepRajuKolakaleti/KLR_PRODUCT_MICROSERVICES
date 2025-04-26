@@ -2,8 +2,8 @@ export interface ChildCategoryI {
     Id?: number;
     ThumnailImage: string;
     Name: string;
-    Category: number;
-    SubCategory: number;
+    Category: string;
+    SubCategory: string;
     Slug: string;
     Status: string;
 }

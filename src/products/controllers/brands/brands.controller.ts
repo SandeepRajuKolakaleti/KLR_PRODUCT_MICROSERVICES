@@ -10,11 +10,11 @@ import { ProductsService } from '../../../products/services/products.service';
 
 @Controller('brands')
 export class BrandsController {
-     constructor(private brandsService: BrandsService, private productService: ProductsService) {}
+    constructor(private brandsService: BrandsService, private productService: ProductsService) {}
     @UseGuards(JwtAuthGuard)
     @Post("create-brand")
     @UseInterceptors(FileInterceptor('file'))
-    async createCategory(@UploadedFile() file: Multer.File,@Body() createdBrandDto: CreateBrandDto): Promise<Observable<BrandI>> {
+    async create(@UploadedFile() file: Multer.File, @Body() createdBrandDto: CreateBrandDto, @Req() request: Request): Promise<Observable<BrandI>> {
         return await this.productService.upload(file.originalname, file.buffer).then((data) => {
             console.log(data);
             createdBrandDto.ThumnailImage = data;
@@ -32,7 +32,7 @@ export class BrandsController {
     @UseGuards(JwtAuthGuard)
     @Post('update-brand')
     @UseInterceptors(FileInterceptor('file'))
-    async updateCategory(@UploadedFile() file: Multer.File, @Body() updatedBrandDto: UpdateBrandDto, @Req() request: Request): Promise<Observable<BrandI>> {
+    async update(@UploadedFile() file: Multer.File, @Body() updatedBrandDto: UpdateBrandDto, @Req() request: Request): Promise<Observable<BrandI>> {
         if (typeof updatedBrandDto.ThumnailImage === 'string' && updatedBrandDto.ThumnailImage !== '')
             return this.brandsService.update(updatedBrandDto);
         else {
@@ -57,7 +57,7 @@ export class BrandsController {
 
     @UseGuards(JwtAuthGuard)
     @Delete('brand/:id')
-    async deleteBrand(@Param('id') id: number): Promise<any> {
+    async delete(@Param('id') id: number): Promise<any> {
         return this.brandsService.delete(id);
     }
 }

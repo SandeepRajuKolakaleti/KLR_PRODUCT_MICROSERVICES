@@ -13,7 +13,7 @@ export class SubCategoryEntity {
     Name!: string;
 
     @Column()
-    Category!: number;
+    Category!: string;
 
     @Column({unique: true})
     Slug!: string;
