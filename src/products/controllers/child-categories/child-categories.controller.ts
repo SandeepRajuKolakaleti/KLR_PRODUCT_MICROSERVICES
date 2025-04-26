@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { ChildCategoryI } from '../../../products/models/child-category.interface';
@@ -31,8 +31,21 @@ export class ChildCategoriesController {
 
     @UseGuards(JwtAuthGuard)
     @Post('update-child-category')
-    async updateChildCategory(@Body() updatedChildCategoryDto: UpdateChildCategoryDto): Promise<Observable<ChildCategoryI>> {
-        return this.childCategoryService.update(updatedChildCategoryDto);
+    @UseInterceptors(FileInterceptor('file'))
+    async updateChildCategory(@UploadedFile() file: Multer.File, @Body() updatedChildCategoryDto: UpdateChildCategoryDto, @Req() request: Request): Promise<Observable<ChildCategoryI>> {
+        if (typeof updatedChildCategoryDto.ThumnailImage === 'string' && updatedChildCategoryDto.ThumnailImage !== '')
+            return this.childCategoryService.update(updatedChildCategoryDto)
+        else {
+            if(file)
+                return await this.productService.upload(file.originalname, file.buffer).then((data) => {
+                    console.log(data);
+                    updatedChildCategoryDto.ThumnailImage = data;
+                    return this.childCategoryService.update(updatedChildCategoryDto)
+                });
+            else {
+                return this.childCategoryService.update(updatedChildCategoryDto)
+            }
+        }
         // AppConstants.app.xyz
     }
 

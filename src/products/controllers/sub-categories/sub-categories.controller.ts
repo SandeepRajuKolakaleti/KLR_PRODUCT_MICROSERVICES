@@ -30,8 +30,21 @@ export class SubCategoriesController {
 
     @UseGuards(JwtAuthGuard)
     @Post('update-subcategory')
-    async updateSubCategory(@Body() updatedSubCategoryDto: UpdateSubCategoryDto): Promise<Observable<SubCategoryI>> {
-        return this.subCategoryService.update(updatedSubCategoryDto);
+    @UseInterceptors(FileInterceptor('file'))
+    async updateSubCategory(@UploadedFile() file: Multer.File, @Body() updatedSubCategoryDto: UpdateSubCategoryDto): Promise<Observable<SubCategoryI>> {
+        if (typeof updatedSubCategoryDto.ThumnailImage === 'string' && updatedSubCategoryDto.ThumnailImage !== '')
+            return this.subCategoryService.update(updatedSubCategoryDto);
+        else {
+            if(file)
+                return await this.productService.upload(file.originalname, file.buffer).then((data) => {
+                    console.log(data);
+                    updatedSubCategoryDto.ThumnailImage = data;
+                    return this.subCategoryService.update(updatedSubCategoryDto);
+                });
+            else {
+                return this.subCategoryService.update(updatedSubCategoryDto);
+            }
+        }
         // AppConstants.app.xyz
     }
 

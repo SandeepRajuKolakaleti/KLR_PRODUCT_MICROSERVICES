@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { BrandI } from '../../../products/models/brand.interface';
@@ -31,8 +31,21 @@ export class BrandsController {
 
     @UseGuards(JwtAuthGuard)
     @Post('update-brand')
-    async updateCategory(@Body() updatedBrandDto: UpdateBrandDto): Promise<Observable<BrandI>> {
-        return this.brandsService.update(updatedBrandDto);
+    @UseInterceptors(FileInterceptor('file'))
+    async updateCategory(@UploadedFile() file: Multer.File, @Body() updatedBrandDto: UpdateBrandDto, @Req() request: Request): Promise<Observable<BrandI>> {
+        if (typeof updatedBrandDto.ThumnailImage === 'string' && updatedBrandDto.ThumnailImage !== '')
+            return this.brandsService.update(updatedBrandDto);
+        else {
+            if(file)
+                return await this.productService.upload(file.originalname, file.buffer).then((data) => {
+                    console.log(data);
+                    updatedBrandDto.ThumnailImage = data;
+                    return this.brandsService.update(updatedBrandDto);
+                });
+            else {
+                return this.brandsService.update(updatedBrandDto);
+            }
+        }
         // AppConstants.app.xyz
     }
 
