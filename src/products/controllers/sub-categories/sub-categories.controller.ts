@@ -6,7 +6,7 @@ import { SubCategoryI } from '../../../products/models/sub-category.interface';
 import { SubCategoriesService } from '../../../products/services/sub-categories/sub-categories.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Multer } from 'multer';
-import { ProductsService } from 'src/products/services/products.service';
+import { ProductsService } from '../../../products/services/products.service';
 @Controller('sub-categories')
 export class SubCategoriesController {
     constructor(private subCategoryService: SubCategoriesService, private productService: ProductsService) {}

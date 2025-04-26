@@ -6,7 +6,7 @@ import { CreateChildCategoryDto, UpdateChildCategoryDto } from '../../../product
 import { ChildCategoriesService } from '../../../products/services/child-categories/child-categories.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Multer } from 'multer';
-import { ProductsService } from 'src/products/services/products.service';
+import { ProductsService } from '../../../products/services/products.service';
 @Controller('child-categories')
 export class ChildCategoriesController {
     constructor(private childCategoryService: ChildCategoriesService, private productService: ProductsService) {}
