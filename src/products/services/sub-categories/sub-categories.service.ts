@@ -48,8 +48,8 @@ export class SubCategoriesService {
     }
 
     findOne(Id: number): Observable<any> {
-        return from(this.subcategoryRepository.findOne({
-            where: {Id},
+        return from(this.subcategoryRepository.find({
+            where: {Category: Id.toString()},
             select: [
                 'Id', 'Name', 'ThumnailImage', 'Category', 'Slug', 'Status'
             ]
