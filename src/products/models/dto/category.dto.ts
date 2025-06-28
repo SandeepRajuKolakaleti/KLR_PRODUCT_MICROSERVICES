@@ -18,7 +18,6 @@ export class CreateCategoryDto {
 }
 
 export class UpdateCategoryDto extends CreateCategoryDto {
-    @IsNumber()
-    @Type(() => Number)
-    Id?: number;
+    @IsString()
+    Id?: string;
 }

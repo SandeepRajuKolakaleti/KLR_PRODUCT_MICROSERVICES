@@ -18,6 +18,6 @@ export class CreateBrandDto {
 }
 
 export class UpdateBrandDto extends CreateBrandDto {
-    @IsNumber()
-    Id?: number;
+    @IsString()
+    Id?: string;
 }

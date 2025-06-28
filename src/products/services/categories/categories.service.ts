@@ -27,10 +27,12 @@ export class CategoriesService {
     }
 
     async update(updatedCategoryDto: UpdateCategoryDto): Promise<Observable<any>> {
-        const Id = updatedCategoryDto.Id;
+        const Id = Number(updatedCategoryDto.Id);
         const category = await this.categoryRepository.findOne({ where: { Id: Id } });
         if (category) {
-            return from(this.categoryRepository.upsert(updatedCategoryDto, ['Id'])).pipe(
+            // Ensure Id is a number before upsert
+            const upsertDto = { ...updatedCategoryDto, Id };
+            return from(this.categoryRepository.upsert(upsertDto, ['Id'])).pipe(
                 switchMap(() =>
                     from(this.categoryRepository.findOne({ where: { Id } })).pipe(
                         map((updatedCategory) => {

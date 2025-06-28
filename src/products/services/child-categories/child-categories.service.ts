@@ -33,11 +33,11 @@ export class ChildCategoriesService {
             return from(this.childCategoryRepository.upsert(updatedChildCategoryDto, ['Id'])).pipe(
                 switchMap(() =>
                     from(this.childCategoryRepository.findOne({ where: { Id } })).pipe(
-                        map((updatedBrand) => {
-                            if (!updatedBrand) {
+                        map((updatedChildCategory) => {
+                            if (!updatedChildCategory) {
                                 throw new Error('Brand update failed');
                             }
-                            return updatedBrand as ChildCategoryI;
+                            return updatedChildCategory as ChildCategoryI;
                         })
                     )
                 )

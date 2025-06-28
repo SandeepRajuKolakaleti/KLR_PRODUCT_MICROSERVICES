@@ -14,9 +14,6 @@ export class CreateSubCategoryDto {
     Category!: string;
     @IsString()
     @Type(() => String)
-    SubCategory!: string;
-    @IsString()
-    @Type(() => String)
     Slug!: string;
     @IsString()
     @Type(() => String)

@@ -27,11 +27,12 @@ export class BrandsService {
     }
 
     async update(updatedBrandDto: UpdateBrandDto): Promise<Observable<any>> {
-        const Id = updatedBrandDto.Id;
+        const Id = Number(updatedBrandDto.Id);
         const brand = await this.brandRepository.findOne({ where: { Id } });
 
         if (brand) {
-            return from(this.brandRepository.upsert(updatedBrandDto, ['Id'])).pipe(
+            const upsertDto = { ...updatedBrandDto, Id };
+            return from(this.brandRepository.upsert(upsertDto, ['Id'])).pipe(
                 switchMap(() =>
                     from(this.brandRepository.findOne({ where: { Id } })).pipe(
                         map((updatedBrand) => {

@@ -33,11 +33,11 @@ export class SubCategoriesService {
             return from(this.subcategoryRepository.upsert(updatedSubCategoryDto, ['Id'])).pipe(
                 switchMap(() =>
                     from(this.subcategoryRepository.findOne({ where: { Id } })).pipe(
-                        map((updatedBrand) => {
-                            if (!updatedBrand) {
-                                throw new Error('Brand update failed');
+                        map((updatedSubCategory) => {
+                            if (!updatedSubCategory) {
+                                throw new Error('sub category update failed');
                             }
-                            return updatedBrand as SubCategoryI;
+                            return updatedSubCategory as SubCategoryI;
                         })
                     )
                 )
@@ -49,7 +49,7 @@ export class SubCategoriesService {
 
     findOne(Id: number): Observable<any> {
         return from(this.subcategoryRepository.find({
-            where: {Category: Id.toString()},
+            where: { Id },
             select: [
                 'Id', 'Name', 'ThumnailImage', 'Category', 'Slug', 'Status'
             ]
