@@ -95,7 +95,16 @@ export class ProductsService {
     }
 
     getAllProducts(): Observable<ProductI[]> {
-        return from(this.productRepository.find());
+        // Fetch all products from the database
+        // and return them as an observable array   
+        return from(this.productRepository.find({
+            select: [
+                'Id', 'Name', 'ThumnailImage', 'Category', 'SubCategory', 'Brand', 'SKU', 'Slug', 
+                'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
+                'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
+                'Specifications', 'Highlight', 'Vendor'
+            ]
+        }));
     }
 
     async readExcelFile(filePath: string): Promise<any> {
