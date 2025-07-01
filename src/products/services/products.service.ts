@@ -99,7 +99,7 @@ export class ProductsService {
         // and return them as an observable array   
         return from(this.productRepository.find({
             select: [
-                'Id', 'Name', 'ThumnailImage', 'Category', 'SubCategory', 'Brand', 'SKU', 'Slug', 
+                'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
                 'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
                 'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
                 'Specifications', 'Highlight', 'Vendor'
