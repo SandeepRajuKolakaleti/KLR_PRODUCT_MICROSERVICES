@@ -16,7 +16,7 @@ export class ProductsController {
     @UseGuards(JwtAuthGuard)
     @Post("create-product")
     @UseInterceptors(FileInterceptor('file'))
-    async createProduct(@UploadedFile() file: Multer.File, @Body() createdProductDto: any,@Req() request: Request): Promise<Observable<ProductI>> {
+    async createProduct(@UploadedFile() file: Multer.File, @Body() createdProductDto: CreateProductDto,@Req() request: Request): Promise<Observable<ProductI>> {
         // console.log(file, createdProductDto, request.body);
         return await this.productService.upload(file.originalname, file.buffer).then((data) => {
             console.log(data);
@@ -31,8 +31,8 @@ export class ProductsController {
                 OfferPrice: Number(createdProductDto.OfferPrice),
                 StockQuantity: Number(createdProductDto.StockQuantity),
                 Weight: Number(createdProductDto.Weight),
-                Highlight: JSON.parse(createdProductDto.Highlight),
-                Specifications: JSON.parse(createdProductDto.Specifications),
+                Highlight: createdProductDto.Highlight,
+                Specifications: createdProductDto.Specifications,
             };
             return this.productService.createProducts(parsedDto);
         });
@@ -103,7 +103,29 @@ export class ProductsController {
 
     @UseGuards(JwtAuthGuard)
     @Post('update-product')
-    async updateProduct(@Body() updatedProductDto: UpdateProductDto): Promise<Observable<ProductI>> {
+     @UseInterceptors(FileInterceptor('file'))
+    async updateProduct(@UploadedFile() file: Multer.File, @Body() updatedProductDto: any, @Req() request: Request): Promise<Observable<ProductI>> {
+        if (file)   {
+            console.log("File uploaded:", file);   
+            return await this.productService.upload(file.originalname, file.buffer).then((data) => {
+                console.log(data);
+                updatedProductDto.ThumnailImage = data;
+                const parsedDto: UpdateProductDto = {
+                    ...updatedProductDto,
+                    Category: Number(updatedProductDto.Category),
+                    SubCategory: Number(updatedProductDto.SubCategory),
+                    ChildCategory: Number(updatedProductDto.ChildCategory),
+                    Brand: Number(updatedProductDto.Brand),
+                    Price: Number(updatedProductDto.Price),
+                    OfferPrice: Number(updatedProductDto.OfferPrice),
+                    StockQuantity: Number(updatedProductDto.StockQuantity),
+                    Weight: Number(updatedProductDto.Weight),
+                    Highlight: JSON.parse(updatedProductDto.Highlight),
+                    Specifications: JSON.parse(updatedProductDto.Specifications),
+                };
+                return this.productService.updateproduct(parsedDto);
+            }); 
+        }
         return this.productService.updateproduct(updatedProductDto);
         // AppConstants.app.xyz
     }

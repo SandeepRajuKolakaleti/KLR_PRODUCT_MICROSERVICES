@@ -75,10 +75,18 @@ export class ProductsService {
     }
 
     async updateproduct(updatedProductDto: UpdateProductDto): Promise<Observable<any>> {
-        const SKU = updatedProductDto.SKU;
-        const product = await this.productRepository.findOne({ where: { SKU } });
+        const Id = updatedProductDto.Id;
+        const product = await this.productRepository.findOne({ where: { Id } });
         if (!product) {
-            return of({ error: `Product with SKU ${SKU} not found` });
+            return of({ error: `Product with Id ${Id} not found` });
+        }
+        if (updatedProductDto.SKU) {
+            const skuExists = await this.productRepository.findOne({
+                where: { SKU: updatedProductDto.SKU },
+            });
+            if (skuExists && skuExists.Id !== product.Id) {
+                return of({ error: `SKU '${updatedProductDto.SKU}' already exists for another product` });
+            }
         }
         if (updatedProductDto.Slug) {
             const slugExists = await this.productRepository.findOne({
@@ -89,9 +97,9 @@ export class ProductsService {
             }
         }
         const updatedData = { ...product, ...updatedProductDto, Id: product.Id  };
-        return from(this.productRepository.save(updatedData)).pipe(
-            map((updatedProduct) => updatedProduct as ProductI)
-        );
+        await this.productRepository.upsert(updatedData, ['Id']);
+        const updatedProduct = await this.productRepository.findOne({ where: { Id: product.Id } });
+        return of(updatedProduct);
     }
 
     getAllProducts(): Observable<ProductI[]> {
