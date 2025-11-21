@@ -56,6 +56,15 @@ export class SubCategoriesService {
         }));
     }
 
+    findOneByCategory(Id: number): Observable<any> {
+       return from(this.subcategoryRepository.find({
+            where: { Category: Id.toString() },
+            select: [
+                'Id', 'Name', 'ThumnailImage', 'Category', 'Slug', 'Status'
+            ]
+        }));
+    }
+
     async delete(Id: number) {
         const subCategory = await this.subcategoryRepository.findOne({ where: { Id } });
         if (subCategory) {

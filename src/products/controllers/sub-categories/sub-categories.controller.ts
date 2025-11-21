@@ -55,6 +55,12 @@ export class SubCategoriesController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('category/:id')
+    async category(@Param('id') id: number): Promise<any> {
+        return this.subCategoryService.findOneByCategory(id);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Delete('subCategory/:id')
     async deleteSubCategory(@Param('id') id: number): Promise<any> {
         return this.subCategoryService.delete(id);
