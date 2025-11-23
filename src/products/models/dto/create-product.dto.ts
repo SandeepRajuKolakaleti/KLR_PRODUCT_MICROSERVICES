@@ -65,8 +65,7 @@ export class CreateProductDto {
     @IsString()
     @Type(() => String)
     LongDescription!: string;
-    @ValidateNested()
-    @Type(() => HighlightDto)
+    @IsString()
     Highlight!: HighlightDto; // {"NewArrival": true, "TopProduct": true, "BestProduct": true, "FeaturedProduct": false}
     @IsString()
     @Type(() => String)
@@ -77,9 +76,7 @@ export class CreateProductDto {
     @IsString()
     @Type(() => String)
     SEODescription!: string;
-    @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => SpecificationDto)
+    @IsString()
     Specifications!: SpecificationDto[]; // [{"key": "Processor", "specification": "Snapdragon 888"}, {"key": "RAM", "specification": "8GB"}, {"key": "Battery", "specification": "5000mAh"}]
     @IsString()
     @Type(() => String)
