@@ -9,7 +9,13 @@ export class AppConstants {
             type: 'JWT' 
         },
         bucket: 'klruploads',
-        key: 'uploads'
+        key: 'uploads',
+        userType: {
+            admin: 'Admin',
+            user: 'User',
+            vendor: 'Vendor',
+            deliveryBoy: 'DeliveryBoy'
+        }
     };
 
 }

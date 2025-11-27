@@ -17,7 +17,7 @@ export class ProductsController {
     @Post("create-product")
     @UseInterceptors(FileInterceptor('file'))
     async createProduct(@UploadedFile() file: Multer.File, @Body() createdProductDto: CreateProductDto,@Req() request: Request): Promise<Observable<ProductI>> {
-        // console.log(file, createdProductDto, request.body);
+        console.log(file, createdProductDto, request.body);
         return await this.productService.upload(file.originalname, file.buffer).then((data) => {
             console.log(data);
             createdProductDto.ThumnailImage = data;
@@ -97,14 +97,18 @@ export class ProductsController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    async getAllProducts() {
-        return this.productService.getAllProducts();
+    async getAllProducts(@Req() request: Request): Promise<Observable<ProductI[]>> {
+        console.log("Request User:", request.user);
+        let user = request.user;
+        return this.productService.getAllProducts(user);
     }
 
     @UseGuards(JwtAuthGuard)
     @Post('update-product')
      @UseInterceptors(FileInterceptor('file'))
     async updateProduct(@UploadedFile() file: Multer.File, @Body() updatedProductDto: any, @Req() request: Request): Promise<Observable<ProductI>> {
+        console.log("Update Product DTO:", updatedProductDto);
+        console.log("Request Body:", request.body);
         if (file)   {
             console.log("File uploaded:", file);   
             return await this.productService.upload(file.originalname, file.buffer).then((data) => {

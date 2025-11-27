@@ -96,7 +96,7 @@ export class VendorController {
 
     @UseGuards(JwtAuthGuard)
     @Post('update-vendor')
-     @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(FileInterceptor('file'))
     async updateVendor(@UploadedFile() file: Multer.File, @Body() updatedVendorDto: UpdateVendorDto, @Req() request: Request): Promise<Observable<VendorI>> {
         if (file)   {
             console.log("File uploaded:", file);   

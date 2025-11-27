@@ -102,17 +102,63 @@ export class ProductsService {
         return of(updatedProduct);
     }
 
-    getAllProducts(): Observable<ProductI[]> {
-        // Fetch all products from the database
-        // and return them as an observable array   
-        return from(this.productRepository.find({
-            select: [
-                'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
-                'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
-                'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
-                'Specifications', 'Highlight', 'Vendor'
-            ]
-        }));
+    getAllProducts(user): Observable<ProductI[]> {
+        if (user.userRole === AppConstants.app.userType.admin) {
+            // Apply user-specific filtering logic here
+            console.log("Applying user-specific filtering for:", user.Username);
+            // For example, filter products by vendor or other criteria
+            // Fetch all products from the database
+            // and return them as an observable array   
+            return from(this.productRepository.find({
+                select: [
+                    'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
+                    'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
+                    'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
+                    'Specifications', 'Highlight', 'Vendor'
+                ]
+            }));
+        } else if (user.userRole === AppConstants.app.userType.vendor) {
+            console.log("Admin access - no filtering applied.");  
+            return from(this.productRepository.find({
+                where: {Vendor: user.id.toString()},
+                select: [
+                    'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
+                    'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
+                    'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
+                    'Specifications', 'Highlight', 'Vendor'
+                ]
+            }));
+        } else if (user.userRole === AppConstants.app.userType.user) {
+            console.log("Regular user access - limited product view.");
+            return from(this.productRepository.find({
+                select: [
+                    'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
+                    'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
+                    'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
+                    'Specifications', 'Highlight', 'Vendor'
+                ]
+            }));
+        } else if (user.userRole === AppConstants.app.userType.deliveryBoy) {
+            console.log("Delivery   boy access - specific product assignments.");
+            return from(this.productRepository.find({
+                select: [
+                    'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
+                    'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
+                    'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
+                    'Specifications', 'Highlight', 'Vendor'
+                ]
+            }));
+        } else {
+            return from(this.productRepository.find({
+                select: [
+                    'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
+                    'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
+                    'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
+                    'Specifications', 'Highlight', 'Vendor'
+                ]
+            }));
+        }
+        
     }
 
     async readExcelFile(filePath: string): Promise<any> {
