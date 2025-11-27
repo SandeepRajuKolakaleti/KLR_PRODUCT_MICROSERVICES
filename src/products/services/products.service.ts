@@ -104,11 +104,7 @@ export class ProductsService {
 
     getAllProducts(user): Observable<ProductI[]> {
         if (user.userRole === AppConstants.app.userType.admin) {
-            // Apply user-specific filtering logic here
             console.log("Applying user-specific filtering for:", user.Username);
-            // For example, filter products by vendor or other criteria
-            // Fetch all products from the database
-            // and return them as an observable array   
             return from(this.productRepository.find({
                 select: [
                     'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
@@ -118,7 +114,7 @@ export class ProductsService {
                 ]
             }));
         } else if (user.userRole === AppConstants.app.userType.vendor) {
-            console.log("Admin access - no filtering applied.");  
+            console.log("Vendor access - no filtering applied.");  
             return from(this.productRepository.find({
                 where: {Vendor: user.id.toString()},
                 select: [
@@ -139,7 +135,7 @@ export class ProductsService {
                 ]
             }));
         } else if (user.userRole === AppConstants.app.userType.deliveryBoy) {
-            console.log("Delivery   boy access - specific product assignments.");
+            console.log("Delivery boy access - specific product assignments.");
             return from(this.productRepository.find({
                 select: [
                     'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
