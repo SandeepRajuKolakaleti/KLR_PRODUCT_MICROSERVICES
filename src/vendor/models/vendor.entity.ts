@@ -1,24 +1,47 @@
 import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class VendorEntity {
+export class UserEntity {
 
     @PrimaryGeneratedColumn()
-    Id!: number;
+    id!: number;
 
     @Column()
-    ThumnailImage!: string;
+    name!: string;
 
-    @Column()
-    Name!: string;
-
-    @Column({select: false})
-    Email!: string;
+    @Column({unique: true})
+    email!: string;
 
     @Column({select: false})
-    PhoneNumber!: number;
+    password!: string;
 
     @Column({select: false})
-    Address!: string;
+    permissionId!: number;
+
+    @Column({select: false})
+    phonenumber!: number;
+
+    @Column({select: false})
+    image!: string;
+
+    @Column({select: false})
+    userRole!: string;
+
+    @Column({select: false})
+    birthday!: string;
+
+    @Column({select: false})
+    address!: string;
+
+    @Column({select: false})
+    revenue!: string;
+
+    @Column({select: false})
+    totalSales!: string;
+
+    @BeforeInsert()
+    emailToLowerCase() {
+        this.email = this.email.toLowerCase();
+    }
 
 }

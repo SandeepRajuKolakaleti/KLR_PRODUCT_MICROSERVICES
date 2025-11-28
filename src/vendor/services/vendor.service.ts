@@ -1,141 +1,144 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateVendorDto, UpdateVendorDto } from '../models/dto/create-vendor.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { from, map, Observable, of, switchMap } from 'rxjs';
 import { VendorI } from '../models/vendor.interface';
-import * as XLSX from 'xlsx';
-import axios from 'axios';
-import { ConfigService } from '@nestjs/config';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { AppConstants } from 'src/app.constants';
-import { VendorEntity } from '../models/vendor.entity';
+import { AuthService } from 'src/auth/services/auth/auth.service';
+import { UserPermissionEntity } from '../models/user.permission.entity';
+import { LoginUserDto } from '../models/dto/LoginUser.dto';
+import { UserEntity } from '../models/vendor.entity';
 import { ProductEntity } from 'src/products/models/product.entity';
 @Injectable()
 export class VendorService {
-    public readonly s3Client;
-    
     constructor(
-        @InjectRepository(VendorEntity)
-        private vendorRepository: Repository<VendorEntity>,
-        private configService: ConfigService,
+        @InjectRepository(UserEntity)
+        private userRepository: Repository<UserEntity>,
+        @InjectRepository(UserPermissionEntity)
+        private userPermissionRepository: Repository<UserPermissionEntity>,
         @InjectRepository(ProductEntity)
         private productRepository: Repository<ProductEntity>,
-    ) {
-        this.s3Client = new S3Client({
-            region: configService.get('S3_REGION'),
-            credentials: {
-              accessKeyId: configService.get('S3_ACCESS_KEY_ID')|| '',
-              secretAccessKey: configService.get('S3_SECRET_ACCESS_KEY') || '',
-            },
-        });
+        private authService: AuthService
+    ) { }
+
+    create(createUserDto: CreateVendorDto): Observable<any> {
+        return this.PermissionExists(createUserDto.userRole.toString()).pipe(switchMap((permissionId: number) => {
+            return this.mailExists(createUserDto.email).pipe(
+                switchMap((exists: boolean) => {
+                    if (!exists) {
+                        return this.authService.hashPassword(createUserDto.password).pipe(
+                            switchMap((passwordHash: string) => {
+                                // Overwrite the user password with the hash, to store it in the db
+                                createUserDto.password = passwordHash;
+                                createUserDto.permissionId = permissionId;
+                                const user = this.userRepository.create({
+                                    ...createUserDto,
+                                    permissionId,
+                                    password: passwordHash
+                                });
+
+                                return from(this.userRepository.save(user)).pipe(
+                                    map((savedUser) => {
+                                        const { password, ...user } = savedUser;
+                                        return user;
+                                    })
+                                );
+                            })
+                        )
+                    } else {
+                        throw new HttpException('Email already in use', HttpStatus.CONFLICT);
+                    }
+                })
+            )
+        }
+        ))
     }
 
-    async upload(fileName: string, file:Buffer) {
-        const folder = AppConstants.app.key;
-        const s3Key = `${folder}/${fileName}`;
-        await this.s3Client.send(
-            new PutObjectCommand({
-                Bucket: AppConstants.app.bucket,
-                Key: s3Key,
-                Body: file
-            })
-        );
-        // await this.getImageUrlToBase64(s3Key)
-        return s3Key;
+    resetPassword(resetPassword: LoginUserDto): Observable<VendorI> {
+        return this.findUserByEmail(resetPassword.email).pipe(
+            switchMap((user: any) => {
+                if (user) {
+                    resetPassword.permissionId = user.permissionId;
+                    resetPassword.id = user.id;
+                    resetPassword.name = user.name;
+                    return this.authService.hashPassword(resetPassword.password).pipe(
+                        switchMap((passwordHash: string) => {
+                            // Overwrite the user password with the hash, to store it in the db
+                            resetPassword.password = passwordHash;
+                            return from(this.userRepository.update(user, {...resetPassword})).pipe(
+                                map((updatedUser: any) => {
+                                    const { password, ...user } = updatedUser;
+                                    return user;
+                                })
+                            )
+                        })
+                    )
+                }
+                return of(user);
+            }),
+        )     
     }
 
-    async getImageUrlToBase64(s3Key) {
-        return await this.imageUrlToBase64(`https://${AppConstants.app.bucket}.s3.${this.configService.get('S3_REGION')}.amazonaws.com/${s3Key}`)
-        .then((base64) => {
-            // console.log("base64", base64);
-            return { img: base64 };
-        })
-        .catch(console.error);
+    findAll(): Observable<VendorI[]> {
+        return from(this.userRepository.find({
+            where: {userRole: 'Vendor'},
+            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales'],
+        }));
     }
 
-    async imageUrlToBase64(url: string): Promise<string> {
-        const response = await axios.get(url, {
-          responseType: 'arraybuffer',
-        });
-      
-        const base64 = Buffer.from(response.data, 'binary').toString('base64');
-      
-        // Optional: Get content-type for full data URI
-        const contentType = response.headers['content-type'];
-      
-        return `data:${contentType};base64,${base64}`;
+    findOne(id: number): Observable<any> {
+        return from(this.userRepository.findOne({
+            where: {userRole: 'Vendor', id},
+            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales'],
+        }));
     }
 
-    createVendor(createVendorDto: CreateVendorDto): Observable<VendorI> {
-        return from(this.vendorRepository.save(createVendorDto)).pipe(
-            map((savedVendor: VendorI) => {
-                const { ...vendor } = savedVendor;
-                return vendor;
+    findUserByEmail(email: string): Observable<any> {
+        return from(this.userRepository.findOne({
+            where: { email },
+            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales'], 
+        }));
+    }
+
+    async deleteUser(id: number) {
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (user) {
+           await this.userRepository.remove(user);
+           return true;
+        }
+    }
+
+    private validatePassword(password: string, storedPasswordHash: string): Observable<boolean> {
+        return this.authService.comparePasswords(password, storedPasswordHash);
+    }
+
+    private mailExists(email: string): Observable<boolean> {
+        return from(this.userRepository.findOne({ where: {email} })).pipe(
+            map((user: any) => {
+                if (user) {
+                    return true;
+                } else {
+                    return false;
+                }
             })
         )
     }
 
-    async updateVendor(updatedVendorDto: UpdateVendorDto): Promise<Observable<any>> {
-        const Id = updatedVendorDto.Id;
-        const vendor = await this.vendorRepository.findOne({ where: { Id } });
-        if (!vendor) {
-            return of({ error: `Vendor with Id ${Id} not found` });
-        }
-        if (updatedVendorDto.Id) {
-            const skuExists = await this.vendorRepository.findOne({
-                where: { Id: updatedVendorDto.Id },
-            });
-            if (skuExists && skuExists.Id !== vendor.Id) {
-                return of({ error: `Id '${updatedVendorDto.Id}' already exists for another vendor` });
-            }
-        }
-        if (updatedVendorDto.Id) {
-            const slugExists = await this.vendorRepository.findOne({
-                where: { Id: updatedVendorDto.Id },
-            });
-            if (slugExists && slugExists.Id !== vendor.Id) {
-                return of({ error: `Slug '${updatedVendorDto.Id}' already exists for another vendor` });
-            }
-        }
-        const updatedData = { ...vendor, ...updatedVendorDto, Id: vendor.Id  };
-        await this.vendorRepository.upsert(updatedData, ['Id']);
-        const updatedVendor = await this.vendorRepository.findOne({ where: { Id: vendor.Id }, select: [
-                'Id', 'Name', 'ThumnailImage', 'Email', 'PhoneNumber', 'Address'
-            ] });
-        return of(updatedVendor);
-    }
 
-    getAllVendors(): Observable<VendorI[]> {
-        // Fetch all vendors from the database
-        // and return them as an observable array   
-        return from(this.vendorRepository.find({
-            select: [
-                'Id', 'Name', 'ThumnailImage', 'Email', 'PhoneNumber', 'Address'
-            ]
-        }));
-    }
-
-    async readExcelFile(filePath: string): Promise<any> {
-        // Read XLS file
-        const workbook = XLSX.readFile(filePath);
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-
-        // Convert sheet to JSON
-        const data: any[] = XLSX.utils.sheet_to_json(sheet);
-
-        // Insert each row into the database
-        for (const row of data) {
-            const vendor: VendorI = this.vendorRepository.create({
-                Name: row["name"],
-                ThumnailImage: row["thumb image"],
-                Email: row["email"],
-                PhoneNumber: row["phone number"],
-                Address: row["address"],
-            });
-            await this.vendorRepository.save(vendor);
-        }
+    private PermissionExists(permissionName: string): Observable<number> {
+        return from(this.userPermissionRepository.findOne({ 
+            where: { permissionName},
+            select: ['permissionId', 'permissionName', 'permissionDescription']
+        })).pipe(
+            map((userPermission: any) => {
+                if (userPermission) {
+                    return userPermission.permissionId;
+                }
+                else {
+                    return 1;
+                }
+            })
+        )
     }
 
     getProductsByVendor(Id: number): Observable<any> {
@@ -148,20 +151,64 @@ export class VendorService {
         }));
     }
 
-    findOne(Id: number): Observable<any> {
-        return from(this.vendorRepository.findOne({
-            where: {Id},
-            select: [
-                'Id', 'Name', 'ThumnailImage', 'Email', 'PhoneNumber', 'Address'
-            ]
-        }));
-    }
+    update(id: number, dto: UpdateVendorDto): Observable<any> {
+        return from(this.userRepository.findOne({ where: { id } })).pipe(
+            switchMap((existingUser) => {
+                if (!existingUser) {
+                    throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+                }
 
-    async deleteVendor(Id: number) {
-        const vendor = await this.vendorRepository.findOne({ where: { Id } });
-        if (vendor) {
-           await this.vendorRepository.remove(vendor);
-           return true;
-        }
+                // Update allowed fields
+                existingUser.name = dto.name ?? existingUser.name;
+                existingUser.email = dto.email?.toLowerCase() ?? existingUser.email;
+                existingUser.userRole = dto.userRole ?? existingUser.userRole;
+                existingUser.permissionId = dto.permissionId ?? existingUser.permissionId;
+                existingUser.phonenumber = Number(dto.phonenumber) ?? existingUser.phonenumber;
+                existingUser.image = dto.image ?? existingUser.image;
+                existingUser.address = dto.address ?? existingUser.address;
+                existingUser.birthday = dto.birthday ?? existingUser.birthday;
+                existingUser.revenue = dto.revenue ?? existingUser.revenue;
+                existingUser.totalSales = dto.totalSales ?? existingUser.totalSales;
+
+                const passwordUpdated = dto.password && dto.password !== existingUser.password;
+
+                // If password updated → hash it and save
+                if (passwordUpdated) {
+                    let existingUserPassword = existingUser.password? existingUser.password : '';
+                    return this.validatePassword(dto.password, existingUserPassword).pipe(
+                        switchMap(passwordMatched => {
+                            if (!passwordMatched) {
+                                return this.authService.hashPassword(dto.password).pipe(
+                                    switchMap((hashed) => {
+                                        existingUser.password = hashed;
+                                        return from(this.userRepository.save(existingUser)).pipe(
+                                            map((updatedUser: any) => {
+                                                const { password, ...user } = updatedUser;
+                                                return user;
+                                            })
+                                        );
+                                    })
+                                );
+                            }
+                            // Password matched (no change needed), just save
+                            return from(this.userRepository.save(existingUser)).pipe(
+                                map((savedUser: any) => {
+                                    const { password, ...user } = savedUser;
+                                    return user;
+                                })
+                            );
+                        })
+                    );
+                }
+
+                // Password not updated
+                return from(this.userRepository.save(existingUser)).pipe(
+                    map((savedUser) => {
+                        const { password, ...safeUser } = savedUser;
+                        return safeUser;
+                    })
+                );
+            })
+        );
     }
 }
