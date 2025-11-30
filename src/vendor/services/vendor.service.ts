@@ -9,6 +9,7 @@ import { UserPermissionEntity } from '../models/user.permission.entity';
 import { LoginUserDto } from '../models/dto/LoginUser.dto';
 import { UserEntity } from '../models/vendor.entity';
 import { ProductEntity } from 'src/products/models/product.entity';
+import { AppConstants } from 'src/app.constants';
 @Injectable()
 export class VendorService {
     constructor(
@@ -81,31 +82,35 @@ export class VendorService {
 
     findAll(): Observable<VendorI[]> {
         return from(this.userRepository.find({
-            where: {userRole: 'Vendor'},
-            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales'],
+            where: {userRole: AppConstants.app.userType.vendor, status: AppConstants.app.status.active},
+            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales', 'status'],
         }));
     }
 
     findOne(id: number): Observable<any> {
         return from(this.userRepository.findOne({
-            where: {userRole: 'Vendor', id},
-            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales'],
+            where: {userRole: AppConstants.app.userType.vendor, id},
+            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales', 'status'],
         }));
     }
 
     findUserByEmail(email: string): Observable<any> {
         return from(this.userRepository.findOne({
             where: { email },
-            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales'], 
+            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales', 'status'], 
         }));
     }
 
     async deleteUser(id: number) {
         const user = await this.userRepository.findOne({ where: { id } });
-        if (user) {
-           await this.userRepository.remove(user);
-           return true;
+        if (!user) {
+            return false;
         }
+
+        user.status = AppConstants.app.status.inactive; // deactivate user instead of deleting
+        await this.userRepository.save(user);
+
+        return true;
     }
 
     private validatePassword(password: string, storedPasswordHash: string): Observable<boolean> {
@@ -163,7 +168,7 @@ export class VendorService {
                 existingUser.email = dto.email?.toLowerCase() ?? existingUser.email;
                 existingUser.userRole = dto.userRole ?? existingUser.userRole;
                 existingUser.permissionId = dto.permissionId ?? existingUser.permissionId;
-                existingUser.phonenumber = Number(dto.phonenumber) ?? existingUser.phonenumber;
+                existingUser.phonenumber = dto.phonenumber ?? existingUser.phonenumber;
                 existingUser.image = dto.image ?? existingUser.image;
                 existingUser.address = dto.address ?? existingUser.address;
                 existingUser.birthday = dto.birthday ?? existingUser.birthday;

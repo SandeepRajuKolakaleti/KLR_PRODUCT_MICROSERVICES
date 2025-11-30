@@ -15,6 +15,10 @@ export class AppConstants {
             user: 'User',
             vendor: 'Vendor',
             deliveryBoy: 'DeliveryBoy'
+        },
+        status: {
+            active: 1,
+            inactive: 0
         }
     };
 

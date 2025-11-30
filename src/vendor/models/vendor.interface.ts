@@ -6,7 +6,7 @@ export interface VendorI {
     password: string;
     permissionId: number;
     userRole: string;
-    phonenumber: number;
+    phonenumber: string;
     image: string;
     birthday: string;
     address: string;

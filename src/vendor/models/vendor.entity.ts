@@ -18,8 +18,8 @@ export class UserEntity {
     @Column({select: false})
     permissionId!: number;
 
-    @Column({select: false})
-    phonenumber!: number;
+    @Column({ type: 'varchar', length: 10, select: false })
+    phonenumber!: string;
 
     @Column({select: false})
     image!: string;
@@ -38,6 +38,13 @@ export class UserEntity {
 
     @Column({select: false})
     totalSales!: string;
+
+    @Column({
+        type: "tinyint",
+        width: 1,
+        default: 1,  // active by default
+    })
+    status!: number;
 
     @BeforeInsert()
     emailToLowerCase() {
