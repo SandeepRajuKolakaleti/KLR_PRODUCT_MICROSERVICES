@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class UserEntity {
@@ -45,6 +45,14 @@ export class UserEntity {
         default: 1,  // active by default
     })
     status!: number;
+
+     // ✅ Auto-created timestamp
+    @CreateDateColumn({ type: "timestamp" })
+    createdAt!: Date;
+
+    // ✅ Auto-updated timestamp
+    @UpdateDateColumn({ type: "timestamp" })
+    updatedAt!: Date;
 
     @BeforeInsert()
     emailToLowerCase() {
