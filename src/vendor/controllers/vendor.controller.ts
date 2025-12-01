@@ -17,10 +17,12 @@ export class VendorController {
     @UseInterceptors(FileInterceptor('file'))
     async create(@UploadedFile() file: Multer.File, @Body() createUserDto: CreateVendorDto): Promise<Observable<VendorI>> {
       console.log(file);
-      if (file) {
-        createUserDto.image = file.originalname;
-      }
-      return this.vendorService.create(createUserDto);
+      return await this.vendorService.upload(file.originalname, file.buffer).then((data) => {
+        console.log(data);
+        createUserDto.image = data;
+        return this.vendorService.create(createUserDto);
+      });
+      
       // AppConstants.app.xyz
     }
 
@@ -70,12 +72,20 @@ export class VendorController {
     @UseInterceptors(FileInterceptor('file'))
     async update(@UploadedFile() file: Multer.File, @Body() updateUserDto: UpdateVendorDto): Promise<Observable<VendorI>> {
       console.log(file);
-      if (file) {
-        updateUserDto.image = file.originalname;
-      }
-      updateUserDto.Id = Number(updateUserDto.Id);
-      return this.vendorService.update(updateUserDto.Id, updateUserDto);
+      const vendorId = Number(updateUserDto.Id);
+      return await this.vendorService.upload(file.originalname, file.buffer).then((data) => {
+        console.log(data);
+        updateUserDto.image = data;
+        return this.vendorService.update(vendorId, updateUserDto);
+      });
       // AppConstants.app.xyz
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('uploadImgToBase64')
+    async base64(@Body() img: any) {
+        console.log(img);
+        return this.vendorService.getImageUrlToBase64(img.url);
     }
 }
 

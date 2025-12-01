@@ -10,8 +10,12 @@ import { LoginUserDto } from '../models/dto/LoginUser.dto';
 import { UserEntity } from '../models/vendor.entity';
 import { ProductEntity } from 'src/products/models/product.entity';
 import { AppConstants } from 'src/app.constants';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
 @Injectable()
 export class VendorService {
+    public readonly s3Client;
     constructor(
         @InjectRepository(UserEntity)
         private userRepository: Repository<UserEntity>,
@@ -19,8 +23,17 @@ export class VendorService {
         private userPermissionRepository: Repository<UserPermissionEntity>,
         @InjectRepository(ProductEntity)
         private productRepository: Repository<ProductEntity>,
-        private authService: AuthService
-    ) { }
+        private authService: AuthService,
+        private configService: ConfigService
+    ) { 
+        this.s3Client = new S3Client({
+            region: configService.get('S3_REGION'),
+            credentials: {
+                accessKeyId: configService.get('S3_ACCESS_KEY_ID')|| '',
+                secretAccessKey: configService.get('S3_SECRET_ACCESS_KEY') || '',
+            },
+        });
+    }
 
     create(createUserDto: CreateVendorDto): Observable<any> {
         return this.PermissionExists(createUserDto.userRole.toString()).pipe(switchMap((permissionId: number) => {
@@ -83,21 +96,21 @@ export class VendorService {
     findAll(): Observable<VendorI[]> {
         return from(this.userRepository.find({
             where: {userRole: AppConstants.app.userType.vendor, status: AppConstants.app.status.active},
-            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales', 'status'],
+            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales', 'status', 'createdAt', 'updatedAt'],
         }));
     }
 
     findOne(id: number): Observable<any> {
         return from(this.userRepository.findOne({
             where: {userRole: AppConstants.app.userType.vendor, id},
-            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales', 'status'],
+            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales', 'status', 'createdAt', 'updatedAt'],
         }));
     }
 
     findUserByEmail(email: string): Observable<any> {
         return from(this.userRepository.findOne({
             where: { email },
-            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales', 'status'], 
+            select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales', 'status', 'createdAt', 'updatedAt'], 
         }));
     }
 
@@ -151,7 +164,7 @@ export class VendorService {
             where: {Vendor: Id.toString()},
             select: [
                 'Id', 'Name', 'ThumnailImage', 'Category', 'SubCategory', 'Brand', 'SKU', 'Slug', 'Price', 'OfferPrice', 'StockQuantity', 
-                'Weight', 'ShortDescription', 'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 'Specifications', 'Highlight', 'Vendor'
+                'Weight', 'ShortDescription', 'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 'Specifications', 'Highlight', 'Vendor', 'createdAt', 'updatedAt'
             ]
         }));
     }
@@ -215,5 +228,41 @@ export class VendorService {
                 );
             })
         );
+    }
+
+    async upload(fileName: string, file:Buffer) {
+        const folder = AppConstants.app.S3.user;
+        const s3Key = `${folder}/${fileName}`;
+        await this.s3Client.send(
+            new PutObjectCommand({
+                Bucket: AppConstants.app.bucket,
+                Key: s3Key,
+                Body: file
+            })
+        );
+        // await this.getImageUrlToBase64(s3Key)
+        return s3Key;
+    }
+
+    async getImageUrlToBase64(s3Key: string) {
+        return await this.imageUrlToBase64(`https://${AppConstants.app.bucket}.s3.${this.configService.get('S3_REGION')}.amazonaws.com/${s3Key}`)
+        .then((base64) => {
+            // console.log("base64", base64);
+            return { img: base64 };
+        })
+        .catch(console.error);
+    }
+
+    async imageUrlToBase64(url: string): Promise<string> {
+        const response = await axios.get(url, {
+          responseType: 'arraybuffer',
+        });
+      
+        const base64 = Buffer.from(response.data, 'binary').toString('base64');
+      
+        // Optional: Get content-type for full data URI
+        const contentType = response.headers['content-type'];
+      
+        return `data:${contentType};base64,${base64}`;
     }
 }

@@ -105,7 +105,7 @@ export class ProductsController {
 
     @UseGuards(JwtAuthGuard)
     @Post('update-product')
-     @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(FileInterceptor('file'))
     async updateProduct(@UploadedFile() file: Multer.File, @Body() updatedProductDto: any, @Req() request: Request): Promise<Observable<ProductI>> {
         console.log("Update Product DTO:", updatedProductDto);
         console.log("Request Body:", request.body);

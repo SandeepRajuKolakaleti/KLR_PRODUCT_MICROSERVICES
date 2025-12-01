@@ -10,6 +10,10 @@ export class AppConstants {
         },
         bucket: 'klruploads',
         key: 'uploads',
+        S3: {
+            user: 'user-profile-images',
+            product: 'product-images'
+        },
         userType: {
             admin: 'Admin',
             user: 'User',

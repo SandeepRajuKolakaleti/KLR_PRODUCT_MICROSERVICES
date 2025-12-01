@@ -30,7 +30,7 @@ export class ProductsService {
     }
 
     async upload(fileName: string, file:Buffer) {
-        const folder = AppConstants.app.key;
+        const folder = AppConstants.app.S3.product;
         const s3Key = `${folder}/${fileName}`;
         await this.s3Client.send(
             new PutObjectCommand({
@@ -110,7 +110,7 @@ export class ProductsService {
                     'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
                     'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
                     'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
-                    'Specifications', 'Highlight', 'Vendor'
+                    'Specifications', 'Highlight', 'Vendor', 'createdAt', 'updatedAt'
                 ]
             }));
         } else if (user.userRole === AppConstants.app.userType.vendor) {
@@ -121,7 +121,7 @@ export class ProductsService {
                     'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
                     'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
                     'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
-                    'Specifications', 'Highlight', 'Vendor'
+                    'Specifications', 'Highlight', 'Vendor', 'createdAt', 'updatedAt'
                 ]
             }));
         } else if (user.userRole === AppConstants.app.userType.user) {
@@ -131,7 +131,7 @@ export class ProductsService {
                     'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
                     'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
                     'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
-                    'Specifications', 'Highlight', 'Vendor'
+                    'Specifications', 'Highlight', 'Vendor', 'createdAt', 'updatedAt'
                 ]
             }));
         } else if (user.userRole === AppConstants.app.userType.deliveryBoy) {
@@ -141,7 +141,7 @@ export class ProductsService {
                     'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
                     'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
                     'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
-                    'Specifications', 'Highlight', 'Vendor'
+                    'Specifications', 'Highlight', 'Vendor', 'createdAt', 'updatedAt'
                 ]
             }));
         } else {
@@ -150,7 +150,7 @@ export class ProductsService {
                     'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
                     'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
                     'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
-                    'Specifications', 'Highlight', 'Vendor'
+                    'Specifications', 'Highlight', 'Vendor', 'createdAt', 'updatedAt'
                 ]
             }));
         }
