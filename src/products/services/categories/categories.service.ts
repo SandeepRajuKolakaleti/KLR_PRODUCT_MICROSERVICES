@@ -5,6 +5,7 @@ import { CategoryEntity } from '../../../products/models/category.entity';
 import { CategoryI } from '../../../products/models/category.interface';
 import { CreateCategoryDto, UpdateCategoryDto } from '../../../products/models/dto/category.dto';
 import { Repository } from 'typeorm';
+import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
 
 @Injectable()
 export class CategoriesService {
@@ -22,8 +23,18 @@ export class CategoriesService {
         )
     }
 
-    getAllCategories() {
-        return from(this.categoryRepository.find());
+    getAllCategories(pagination: Pagination): Observable<PaginatedResult<CategoryI>> {
+        return from(this.categoryRepository.findAndCount({
+            skip: pagination.offset,
+            take: pagination.limit,
+            order: { createdAt: "DESC" }
+        })).pipe(
+        map(([products, total]) => ({
+            total: total,
+            offset: pagination.offset,
+            limit: pagination.limit,
+            data: products
+        })))
     }
 
     async update(updatedCategoryDto: UpdateCategoryDto): Promise<Observable<any>> {

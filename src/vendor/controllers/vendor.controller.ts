@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, Param, Delete, ParseFilePipe, FileTypeValidator, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, Param, Delete, ParseFilePipe, FileTypeValidator, Req, Query, ParseIntPipe } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { Observable } from 'rxjs';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -8,6 +8,7 @@ import { CreateVendorDto, UpdateVendorDto } from '../models/dto/create-vendor.dt
 import { VendorI } from '../models/vendor.interface';
 import { ProductsService } from 'src/products/services/products.service';
 import { LoginUserDto } from '../models/dto/LoginUser.dto';
+import { PaginatedResult } from 'src/products/models/pagination.interface';
 
 @Controller('vendors')
 export class VendorController {
@@ -28,8 +29,13 @@ export class VendorController {
 
     @UseGuards(JwtAuthGuard)
     @Get('getAll')
-    findAll(): Observable<VendorI[]> {
-        return this.vendorService.findAll();
+    findAll(@Req() request: Request, 
+        @Query("offset", new ParseIntPipe({ optional: true })) offset = 0,
+        @Query("limit", new ParseIntPipe({ optional: true })) limit = 10,): Observable<PaginatedResult<VendorI>> {
+        return this.vendorService.findAll({
+            offset: Number(offset),
+            limit: Number(limit)
+        });
     }
 
     @UseGuards(JwtAuthGuard)

@@ -5,6 +5,7 @@ import { ChildCategoryEntity } from '../../../products/models/child-category.ent
 import { ChildCategoryI } from '../../../products/models/child-category.interface';
 import { CreateChildCategoryDto, UpdateChildCategoryDto } from '../../../products/models/dto/child-category.dto';
 import { Repository } from 'typeorm';
+import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
 
 @Injectable()
 export class ChildCategoriesService {
@@ -22,8 +23,18 @@ export class ChildCategoriesService {
         )
     }
 
-    getAllChildCategories() {
-        return from(this.childCategoryRepository.find());
+    getAllChildCategories(pagination: Pagination): Observable<PaginatedResult<ChildCategoryI>> {
+        return from(this.childCategoryRepository.findAndCount({
+            skip: pagination.offset,
+            take: pagination.limit,
+            order: { createdAt: "DESC" }
+        })).pipe(
+        map(([products, total]) => ({
+            total: total,
+            offset: pagination.offset,
+            limit: pagination.limit,
+            data: products
+        })));
     }
 
     async update(updatedChildCategoryDto: UpdateChildCategoryDto): Promise<Observable<any>> {

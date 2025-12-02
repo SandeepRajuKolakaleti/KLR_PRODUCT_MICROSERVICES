@@ -5,6 +5,7 @@ import { CreateSubCategoryDto, UpdateSubCategoryDto } from '../../../products/mo
 import { SubCategoryEntity } from '../../../products/models/sub-category.entity';
 import { SubCategoryI } from '../../../products/models/sub-category.interface';
 import { Repository } from 'typeorm';
+import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
 
 @Injectable()
 export class SubCategoriesService {
@@ -22,8 +23,18 @@ export class SubCategoriesService {
         )
     }
 
-    getAllSubCategories() {
-        return from(this.subcategoryRepository.find());
+    getAllSubCategories(pagination: Pagination): Observable<PaginatedResult<SubCategoryI>> {
+        return from(this.subcategoryRepository.findAndCount({
+            skip: pagination.offset,
+            take: pagination.limit,
+            order: { createdAt: "DESC" }
+        })).pipe(
+        map(([products, total]) => ({
+            total: total,
+            offset: pagination.offset,
+            limit: pagination.limit,
+            data: products
+        })));
     }
 
     async update(updatedSubCategoryDto: UpdateSubCategoryDto): Promise<Observable<any>> {

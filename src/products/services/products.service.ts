@@ -10,6 +10,7 @@ import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { AppConstants } from 'src/app.constants';
+import { PaginatedResult, Pagination } from '../models/pagination.interface';
 
 @Injectable()
 export class ProductsService {
@@ -102,57 +103,102 @@ export class ProductsService {
         return of(updatedProduct);
     }
 
-    getAllProducts(user): Observable<ProductI[]> {
+    getAllProducts(user, pagination: Pagination): Observable<PaginatedResult<ProductI>> {
         if (user.userRole === AppConstants.app.userType.admin) {
             console.log("Applying user-specific filtering for:", user.Username);
-            return from(this.productRepository.find({
+            return from(this.productRepository.findAndCount({
                 select: [
                     'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
                     'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
                     'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
                     'Specifications', 'Highlight', 'Vendor', 'createdAt', 'updatedAt'
-                ]
-            }));
+                ],
+                skip: pagination.offset,
+                take: pagination.limit,
+                order: { createdAt: "DESC" }
+            })).pipe(
+            map(([products, total]) => ({
+                total: total,
+                offset: pagination.offset,
+                limit: pagination.limit,
+                data: products
+            })));
         } else if (user.userRole === AppConstants.app.userType.vendor) {
             console.log("Vendor access - no filtering applied.");  
-            return from(this.productRepository.find({
+            return from(this.productRepository.findAndCount({
                 where: {Vendor: user.id.toString()},
                 select: [
                     'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
                     'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
                     'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
                     'Specifications', 'Highlight', 'Vendor', 'createdAt', 'updatedAt'
-                ]
-            }));
+                ],
+                skip: pagination.offset,
+                take: pagination.limit,
+                order: { createdAt: "DESC" }
+            })).pipe(
+            map(([products, total]) => ({
+                total: total,
+                offset: pagination.offset,
+                limit: pagination.limit,
+                data: products
+            })));
         } else if (user.userRole === AppConstants.app.userType.user) {
             console.log("Regular user access - limited product view.");
-            return from(this.productRepository.find({
+            return from(this.productRepository.findAndCount({
                 select: [
                     'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
                     'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
                     'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
                     'Specifications', 'Highlight', 'Vendor', 'createdAt', 'updatedAt'
-                ]
-            }));
+                ],
+                skip: pagination.offset,
+                take: pagination.limit,
+                order: { createdAt: "DESC" }
+            })).pipe(
+            map(([products, total]) => ({
+                total: total,
+                offset: pagination.offset,
+                limit: pagination.limit,
+                data: products
+            })));
         } else if (user.userRole === AppConstants.app.userType.deliveryBoy) {
             console.log("Delivery boy access - specific product assignments.");
-            return from(this.productRepository.find({
+            return from(this.productRepository.findAndCount({
                 select: [
                     'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
                     'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
                     'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
                     'Specifications', 'Highlight', 'Vendor', 'createdAt', 'updatedAt'
-                ]
-            }));
+                ],
+                skip: pagination.offset,
+                take: pagination.limit,
+                order: { createdAt: "DESC" }
+            })).pipe(
+            map(([products, total]) => ({
+                total: total,
+                offset: pagination.offset,
+                limit: pagination.limit,
+                data: products
+            })));
         } else {
-            return from(this.productRepository.find({
+            return from(this.productRepository.findAndCount({
                 select: [
                     'Id', 'Name', 'ThumnailImage', 'Category', 'ChildCategory', 'SubCategory', 'Brand', 'SKU', 'Slug', 
                     'Price', 'OfferPrice', 'StockQuantity', 'Weight', 'ShortDescription', 
                     'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 
                     'Specifications', 'Highlight', 'Vendor', 'createdAt', 'updatedAt'
-                ]
-            }));
+                ],
+                skip: pagination.offset,
+                take: pagination.limit,
+                order: { createdAt: "DESC" }
+            })).pipe(
+            map(([products, total]) => ({
+                total: total,
+                offset: pagination.offset,
+                limit: pagination.limit,
+                data: products
+            })))
         }
         
     }

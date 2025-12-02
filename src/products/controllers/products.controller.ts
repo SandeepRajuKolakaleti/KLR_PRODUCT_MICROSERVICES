@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, Param, Delete, ParseFilePipe, FileTypeValidator, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, Param, Delete, ParseFilePipe, FileTypeValidator, Req, Query, ParseIntPipe } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ProductsService } from '../services/products.service';
 import { Observable } from 'rxjs';
@@ -8,6 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Multer, diskStorage } from 'multer';
 import { extname } from 'path';
 import { Request } from 'express';
+import { PaginatedResult } from '../models/pagination.interface';
 
 @Controller('products')
 export class ProductsController {
@@ -97,10 +98,17 @@ export class ProductsController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    async getAllProducts(@Req() request: Request): Promise<Observable<ProductI[]>> {
+    async getAllProducts(
+            @Req() request: Request, 
+            @Query("offset", new ParseIntPipe({ optional: true })) offset = 0,
+            @Query("limit", new ParseIntPipe({ optional: true })) limit = 10,
+        ): Promise<Observable<PaginatedResult<ProductI>>> {
         console.log("Request User:", request.user);
         let user = request.user;
-        return this.productService.getAllProducts(user);
+        return this.productService.getAllProducts(user,  {
+            offset: Number(offset),
+            limit: Number(limit)
+        });
     }
 
     @UseGuards(JwtAuthGuard)

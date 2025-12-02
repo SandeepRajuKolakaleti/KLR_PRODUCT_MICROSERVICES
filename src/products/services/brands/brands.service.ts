@@ -5,6 +5,7 @@ import { BrandEntity } from '../../../products/models/brand.entity';
 import { BrandI } from '../../../products/models/brand.interface';
 import { CreateBrandDto, UpdateBrandDto } from '../../../products/models/dto/brand.dto';
 import { Repository } from 'typeorm';
+import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
 
 @Injectable()
 export class BrandsService {
@@ -22,8 +23,18 @@ export class BrandsService {
         )
     }
 
-    getAllBrands() {
-        return from(this.brandRepository.find());
+    getAllBrands(pagination: Pagination): Observable<PaginatedResult<BrandI>> {
+        return from(this.brandRepository.findAndCount({
+            skip: pagination.offset,
+            take: pagination.limit,
+            order: { createdAt: "DESC" }
+        })).pipe(
+        map(([products, total]) => ({
+            total: total,
+            offset: pagination.offset,
+            limit: pagination.limit,
+            data: products
+        })));
     }
 
     async update(updatedBrandDto: UpdateBrandDto): Promise<Observable<any>> {

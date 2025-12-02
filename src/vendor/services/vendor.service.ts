@@ -13,6 +13,7 @@ import { AppConstants } from 'src/app.constants';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
 @Injectable()
 export class VendorService {
     public readonly s3Client;
@@ -93,11 +94,20 @@ export class VendorService {
         )     
     }
 
-    findAll(): Observable<VendorI[]> {
-        return from(this.userRepository.find({
+    findAll(pagination: Pagination): Observable<PaginatedResult<VendorI>> {
+        return from(this.userRepository.findAndCount({
             where: {userRole: AppConstants.app.userType.vendor, status: AppConstants.app.status.active},
+            skip: pagination.offset,
+            take: pagination.limit,
+            order: { createdAt: "DESC" },
             select: ['id', 'email', 'name', 'password', 'phonenumber', 'image', 'permissionId', 'address', 'birthday', 'userRole', 'revenue', 'totalSales', 'status', 'createdAt', 'updatedAt'],
-        }));
+        })).pipe(
+        map(([products, total]) => ({
+            total: total,
+            offset: pagination.offset,
+            limit: pagination.limit,
+            data: products
+        })));
     }
 
     findOne(id: number): Observable<any> {
