@@ -18,9 +18,9 @@ export class CreateChildCategoryDto {
     @IsString()
     @Type(() => String)
     Slug!: string;
-    @IsString()
-    @Type(() => String)
-    Status!: string;
+    @IsNumber()
+    @Type(() => Number)
+    Status!: number;
 }
 
 export class UpdateChildCategoryDto extends CreateChildCategoryDto {

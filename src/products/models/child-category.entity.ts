@@ -21,8 +21,12 @@ export class ChildCategoryEntity {
     @Column({unique: true})
     Slug!: string;
 
-    @Column()
-    Status!: string;
+    @Column({
+        type: "tinyint",
+        width: 1,
+        default: 1,  // active by default
+    })
+    Status!: number;
 
     // ✅ Auto-created timestamp
     @CreateDateColumn({ type: "timestamp" })

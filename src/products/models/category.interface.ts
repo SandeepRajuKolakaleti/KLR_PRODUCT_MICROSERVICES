@@ -3,5 +3,5 @@ export interface CategoryI {
     ThumnailImage: string;
     Name: string;
     Slug: string;
-    Status: string;
+    Status: number;
 }

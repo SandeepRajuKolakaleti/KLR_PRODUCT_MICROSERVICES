@@ -17,7 +17,7 @@ export interface ProductI {
     ShortDescription: string;
     LongDescription: string;
     Highlight: HighlightDto;
-    Status: string; 
+    Status: number;
     SEOTitle: string;
     SEODescription: string;
     Specifications: SpecificationDto[];

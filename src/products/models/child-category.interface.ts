@@ -5,5 +5,5 @@ export interface ChildCategoryI {
     Category: string;
     SubCategory: string;
     Slug: string;
-    Status: string;
+    Status: number;
 }

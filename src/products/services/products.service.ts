@@ -256,9 +256,13 @@ export class ProductsService {
 
     async deleteProduct(Id: number) {
         const product = await this.productRepository.findOne({ where: { Id } });
-        if (product) {
-           await this.productRepository.remove(product);
-           return true;
+        if (!product) {
+            return false;
         }
+
+        product.Status = AppConstants.app.status.inactive; // deactivate instead of deleting
+        await this.productRepository.save(product);
+
+        return true;
     }
 }

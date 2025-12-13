@@ -6,6 +6,7 @@ import { BrandI } from '../../../products/models/brand.interface';
 import { CreateBrandDto, UpdateBrandDto } from '../../../products/models/dto/brand.dto';
 import { Repository } from 'typeorm';
 import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
+import { AppConstants } from 'src/app.constants';
 
 @Injectable()
 export class BrandsService {
@@ -71,9 +72,13 @@ export class BrandsService {
 
     async delete(Id: number) {
         const brand = await this.brandRepository.findOne({ where: { Id } });
-        if (brand) {
-            await this.brandRepository.remove(brand);
-            return true;
+        if (!brand) {
+            return false;
         }
+
+        brand.Status = AppConstants.app.status.inactive; // deactivate instead of deleting
+        await this.brandRepository.save(brand);
+
+        return true;
     }
 }

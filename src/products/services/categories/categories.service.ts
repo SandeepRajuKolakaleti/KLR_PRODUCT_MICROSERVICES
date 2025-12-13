@@ -6,6 +6,7 @@ import { CategoryI } from '../../../products/models/category.interface';
 import { CreateCategoryDto, UpdateCategoryDto } from '../../../products/models/dto/category.dto';
 import { Repository } from 'typeorm';
 import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
+import { AppConstants } from 'src/app.constants';
 
 @Injectable()
 export class CategoriesService {
@@ -71,10 +72,14 @@ export class CategoriesService {
 
     async delete(Id: number) {
         const category = await this.categoryRepository.findOne({ where: { Id } });
-        if (category) {
-           await this.categoryRepository.remove(category);
-           return true;
+        if (!category) {
+            return false;
         }
+
+        category.Status = AppConstants.app.status.inactive; // deactivate instead of deleting
+        await this.categoryRepository.save(category);
+
+        return true;
     }
 
 }

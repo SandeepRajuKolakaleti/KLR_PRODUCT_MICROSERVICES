@@ -6,6 +6,7 @@ import { ChildCategoryI } from '../../../products/models/child-category.interfac
 import { CreateChildCategoryDto, UpdateChildCategoryDto } from '../../../products/models/dto/child-category.dto';
 import { Repository } from 'typeorm';
 import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
+import { AppConstants } from 'src/app.constants';
 
 @Injectable()
 export class ChildCategoriesService {
@@ -69,9 +70,13 @@ export class ChildCategoriesService {
 
     async delete(Id: number) {
         const childCategory = await this.childCategoryRepository.findOne({ where: { Id } });
-        if (childCategory) {
-            await this.childCategoryRepository.remove(childCategory);
-            return true;
+        if (!childCategory) {
+            return false;
         }
+
+        childCategory.Status = AppConstants.app.status.inactive; // deactivate instead of deleting
+        await this.childCategoryRepository.save(childCategory);
+
+        return true;
     }
 }

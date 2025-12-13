@@ -67,9 +67,9 @@ export class CreateProductDto {
     LongDescription!: string;
     @IsString()
     Highlight!: HighlightDto; // {"NewArrival": true, "TopProduct": true, "BestProduct": true, "FeaturedProduct": false}
-    @IsString()
-    @Type(() => String)
-    Status!: string;
+    @IsNumber()
+    @Type(() => Number)
+    Status!: number;
     @IsString()
     @Type(() => String)
     SEOTitle!: string;

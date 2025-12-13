@@ -52,8 +52,12 @@ export class ProductEntity {
     @Column({ type: "json", nullable: true })
     Highlight!: HighlightDto;
 
-    @Column()
-    Status!: string; 
+    @Column({
+        type: "tinyint",
+        width: 1,
+        default: 1,  // active by default
+    })
+    Status!: number;
 
     @Column()
     SEOTitle!: string;

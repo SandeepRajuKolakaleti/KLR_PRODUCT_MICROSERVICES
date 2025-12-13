@@ -6,6 +6,7 @@ import { SubCategoryEntity } from '../../../products/models/sub-category.entity'
 import { SubCategoryI } from '../../../products/models/sub-category.interface';
 import { Repository } from 'typeorm';
 import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
+import { AppConstants } from 'src/app.constants';
 
 @Injectable()
 export class SubCategoriesService {
@@ -78,9 +79,13 @@ export class SubCategoriesService {
 
     async delete(Id: number) {
         const subCategory = await this.subcategoryRepository.findOne({ where: { Id } });
-        if (subCategory) {
-            await this.subcategoryRepository.remove(subCategory);
-            return true;
+        if (!subCategory) {
+            return false;
         }
+
+        subCategory.Status = AppConstants.app.status.inactive; // deactivate instead of deleting
+        await this.subcategoryRepository.save(subCategory);
+
+        return true;
     }
 }

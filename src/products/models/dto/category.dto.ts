@@ -12,9 +12,9 @@ export class CreateCategoryDto {
     @IsString()
     @Type(() => String)
     Slug!: string;
-    @IsString()
-    @Type(() => String)
-    Status!: string;
+    @IsNumber()
+    @Type(() => Number)
+    Status!: number;
 }
 
 export class UpdateCategoryDto extends CreateCategoryDto {
