@@ -5,8 +5,8 @@ import { BrandEntity } from '../../../products/models/brand.entity';
 import { BrandI } from '../../../products/models/brand.interface';
 import { CreateBrandDto, UpdateBrandDto } from '../../../products/models/dto/brand.dto';
 import { Repository } from 'typeorm';
-import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
-import { AppConstants } from 'src/app.constants';
+import { PaginatedResult, Pagination } from '../../../products/models/pagination.interface';
+import { AppConstants } from '../../../app.constants';
 
 @Injectable()
 export class BrandsService {

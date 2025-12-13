@@ -4,16 +4,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { from, map, Observable, of, switchMap } from 'rxjs';
 import { VendorI } from '../models/vendor.interface';
-import { AuthService } from 'src/auth/services/auth/auth.service';
+import { AuthService } from '../../auth/services/auth/auth.service';
 import { UserPermissionEntity } from '../models/user.permission.entity';
 import { LoginUserDto } from '../models/dto/LoginUser.dto';
 import { UserEntity } from '../models/vendor.entity';
-import { ProductEntity } from 'src/products/models/product.entity';
-import { AppConstants } from 'src/app.constants';
+import { ProductEntity } from '../../products/models/product.entity';
+import { AppConstants } from '../../app.constants';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
+import { PaginatedResult, Pagination } from '../../products/models/pagination.interface';
 @Injectable()
 export class VendorService {
     public readonly s3Client;

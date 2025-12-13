@@ -5,8 +5,8 @@ import { ChildCategoryEntity } from '../../../products/models/child-category.ent
 import { ChildCategoryI } from '../../../products/models/child-category.interface';
 import { CreateChildCategoryDto, UpdateChildCategoryDto } from '../../../products/models/dto/child-category.dto';
 import { Repository } from 'typeorm';
-import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
-import { AppConstants } from 'src/app.constants';
+import { PaginatedResult, Pagination } from '../../../products/models/pagination.interface';
+import { AppConstants } from '../../../app.constants';
 
 @Injectable()
 export class ChildCategoriesService {

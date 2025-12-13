@@ -9,7 +9,7 @@ import * as XLSX from 'xlsx';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { AppConstants } from 'src/app.constants';
+import { AppConstants } from '../../app.constants';
 import { PaginatedResult, Pagination } from '../models/pagination.interface';
 
 @Injectable()

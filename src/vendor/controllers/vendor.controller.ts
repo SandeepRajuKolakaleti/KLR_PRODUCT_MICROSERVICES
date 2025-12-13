@@ -6,9 +6,9 @@ import { Multer } from 'multer';
 import { VendorService } from '../services/vendor.service';
 import { CreateVendorDto, UpdateVendorDto } from '../models/dto/create-vendor.dto';
 import { VendorI } from '../models/vendor.interface';
-import { ProductsService } from 'src/products/services/products.service';
+import { ProductsService } from '../../products/services/products.service';
 import { LoginUserDto } from '../models/dto/LoginUser.dto';
-import { PaginatedResult } from 'src/products/models/pagination.interface';
+import { PaginatedResult } from '../../products/models/pagination.interface';
 
 @Controller('vendors')
 export class VendorController {

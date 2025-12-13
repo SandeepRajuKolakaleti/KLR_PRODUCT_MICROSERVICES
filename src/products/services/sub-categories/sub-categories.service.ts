@@ -5,8 +5,8 @@ import { CreateSubCategoryDto, UpdateSubCategoryDto } from '../../../products/mo
 import { SubCategoryEntity } from '../../../products/models/sub-category.entity';
 import { SubCategoryI } from '../../../products/models/sub-category.interface';
 import { Repository } from 'typeorm';
-import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
-import { AppConstants } from 'src/app.constants';
+import { PaginatedResult, Pagination } from '../../../products/models/pagination.interface';
+import { AppConstants } from '../../../app.constants';
 
 @Injectable()
 export class SubCategoriesService {

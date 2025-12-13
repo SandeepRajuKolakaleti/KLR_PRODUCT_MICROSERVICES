@@ -4,10 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { VendorService } from './services/vendor.service';
 import { VendorController } from './controllers/vendor.controller';
 import { UserEntity } from './models/vendor.entity';
-import { ProductEntity } from 'src/products/models/product.entity';
-import { ProductsService } from 'src/products/services/products.service';
+import { ProductEntity } from '../products/models/product.entity';
+import { ProductsService } from '../products/services/products.service';
 import { UserPermissionEntity } from './models/user.permission.entity';
-import { AuthService } from 'src/auth/services/auth/auth.service';
+import { AuthService } from '../auth/services/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({

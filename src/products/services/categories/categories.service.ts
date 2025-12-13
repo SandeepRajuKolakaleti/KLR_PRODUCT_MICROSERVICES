@@ -5,8 +5,8 @@ import { CategoryEntity } from '../../../products/models/category.entity';
 import { CategoryI } from '../../../products/models/category.interface';
 import { CreateCategoryDto, UpdateCategoryDto } from '../../../products/models/dto/category.dto';
 import { Repository } from 'typeorm';
-import { PaginatedResult, Pagination } from 'src/products/models/pagination.interface';
-import { AppConstants } from 'src/app.constants';
+import { PaginatedResult, Pagination } from '../../../products/models/pagination.interface';
+import { AppConstants } from '../../../app.constants';
 
 @Injectable()
 export class CategoriesService {
