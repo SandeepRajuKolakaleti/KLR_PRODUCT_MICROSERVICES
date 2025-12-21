@@ -112,6 +112,28 @@ export class ProductsController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('search')
+    async searchByCategory(
+    @Req() request: Request,
+    @Query('category', ParseIntPipe) category: number,
+    @Query('subCategory', ParseIntPipe) subCategory: number,
+    @Query('offset', new ParseIntPipe({ optional: true })) offset = 0,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
+    ): Promise<Observable<PaginatedResult<ProductI>>> {
+        const user = request.user;
+        return this.productService.searchByCategory(
+            user,
+            category,
+            subCategory,
+            {
+            offset: Number(offset),
+            limit: Number(limit),
+            }
+        );
+    }
+
+
+    @UseGuards(JwtAuthGuard)
     @Post('update-product')
     @UseInterceptors(FileInterceptor('file'))
     async updateProduct(@UploadedFile() file: Multer.File, @Body() updatedProductDto: any, @Req() request: Request): Promise<Observable<ProductI>> {

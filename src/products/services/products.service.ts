@@ -265,4 +265,33 @@ export class ProductsService {
 
         return true;
     }
+
+    searchByCategory(
+    user: any,
+    categoryId: number,
+    subCategoryId: number,
+    pagination: { offset: number; limit: number }
+    ): Observable<PaginatedResult<ProductI>> {
+
+    return from(this.productRepository.findAndCount({
+        where: {
+            Category: categoryId,
+            SubCategory: subCategoryId,
+            Status: 1, // if soft delete exists
+        },
+        skip: pagination.offset,
+        take: pagination.limit,
+        order: {
+            createdAt: 'DESC',
+        },
+    })).pipe(
+        map(([data, total]) => ({
+            data,
+            total,
+            offset: pagination.offset,
+            limit: pagination.limit,
+        }))
+    );
+    }
+
 }
