@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, 
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { Observable } from 'rxjs';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Multer } from 'multer';
+import { Express } from 'express';
 import { VendorService } from '../services/vendor.service';
 import { CreateVendorDto, UpdateVendorDto } from '../models/dto/create-vendor.dto';
 import { VendorI } from '../models/vendor.interface';
@@ -16,7 +16,7 @@ export class VendorController {
 
     @Post('create-vendor')
     @UseInterceptors(FileInterceptor('file'))
-    async create(@UploadedFile() file: Multer.File, @Body() createUserDto: CreateVendorDto): Promise<Observable<VendorI>> {
+    async create(@UploadedFile() file: Express.Multer.File, @Body() createUserDto: CreateVendorDto): Promise<Observable<VendorI>> {
       console.log(file);
       return await this.vendorService.upload(file.originalname, file.buffer).then((data) => {
         console.log(data);
@@ -76,7 +76,7 @@ export class VendorController {
 
     @Post('update-vendor')
     @UseInterceptors(FileInterceptor('file'))
-    async update(@UploadedFile() file: Multer.File, @Body() updateUserDto: UpdateVendorDto): Promise<Observable<VendorI>> {
+    async update(@UploadedFile() file: Express.Multer.File, @Body() updateUserDto: UpdateVendorDto): Promise<Observable<VendorI>> {
       console.log(file);
       const vendorId = Number(updateUserDto.Id);
       return await this.vendorService.upload(file.originalname, file.buffer).then((data) => {
