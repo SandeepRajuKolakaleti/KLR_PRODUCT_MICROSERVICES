@@ -5,7 +5,7 @@ import { ChildCategoryI } from '../../../products/models/child-category.interfac
 import { CreateChildCategoryDto, UpdateChildCategoryDto } from '../../../products/models/dto/child-category.dto';
 import { ChildCategoriesService } from '../../../products/services/child-categories/child-categories.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Multer } from 'multer';
+import { Express } from 'express';
 import { ProductsService } from '../../../products/services/products.service';
 @Controller('child-categories')
 export class ChildCategoriesController {
@@ -14,7 +14,7 @@ export class ChildCategoriesController {
     @UseGuards(JwtAuthGuard)
     @Post("create-child-category")
     @UseInterceptors(FileInterceptor('file'))
-    async createChildCategory(@UploadedFile() file: Multer.File, @Body() createdChildCategoryDto: CreateChildCategoryDto): Promise<Observable<ChildCategoryI>> {
+    async createChildCategory(@UploadedFile() file: Express.Multer.File, @Body() createdChildCategoryDto: CreateChildCategoryDto): Promise<Observable<ChildCategoryI>> {
         return await this.productService.upload(file.originalname, file.buffer).then((data) => {
             console.log(data);
             createdChildCategoryDto.ThumnailImage = data;
@@ -37,7 +37,7 @@ export class ChildCategoriesController {
     @UseGuards(JwtAuthGuard)
     @Post('update-child-category')
     @UseInterceptors(FileInterceptor('file'))
-    async updateChildCategory(@UploadedFile() file: Multer.File, @Body() updatedChildCategoryDto: UpdateChildCategoryDto, @Req() request: Request): Promise<Observable<ChildCategoryI>> {
+    async updateChildCategory(@UploadedFile() file: Express.Multer.File, @Body() updatedChildCategoryDto: UpdateChildCategoryDto, @Req() request: Request): Promise<Observable<ChildCategoryI>> {
         if (typeof updatedChildCategoryDto.ThumnailImage === 'string' && updatedChildCategoryDto.ThumnailImage !== '')
             return this.childCategoryService.update(updatedChildCategoryDto)
         else {

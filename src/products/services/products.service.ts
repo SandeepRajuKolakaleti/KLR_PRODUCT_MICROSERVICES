@@ -266,32 +266,46 @@ export class ProductsService {
         return true;
     }
 
-    searchByCategory(
-    user: any,
-    categoryId: number,
-    subCategoryId: number,
-    pagination: { offset: number; limit: number }
-    ): Observable<PaginatedResult<ProductI>> {
+    async search(filters: {
+        category?: number;
+        subCategory?: number;
+        brand?: number;
+        offset: number;
+        limit: number;
+    }) {
+        const query = this.productRepository.createQueryBuilder('product');
 
-    return from(this.productRepository.findAndCount({
-        where: {
-            Category: categoryId,
-            SubCategory: subCategoryId,
-            Status: 1, // if soft delete exists
-        },
-        skip: pagination.offset,
-        take: pagination.limit,
-        order: {
-            createdAt: 'DESC',
-        },
-    })).pipe(
-        map(([data, total]) => ({
+        if (filters.category) {
+            query.andWhere('product.Category = :category', {
+            category: filters.category,
+            });
+        }
+
+        if (filters.subCategory) {
+            query.andWhere('product.SubCategory = :subCategory', {
+            subCategory: filters.subCategory,
+            });
+        }
+
+        if (filters.brand) {
+            query.andWhere('product.Brand = :brand', {
+            brand: filters.brand,
+            });
+        }
+
+        query
+            .orderBy('product.createdAt', 'DESC')
+            .skip(filters.offset)
+            .take(filters.limit);
+
+        const [data, total] = await query.getManyAndCount();
+
+        return {
             data,
             total,
-            offset: pagination.offset,
-            limit: pagination.limit,
-        }))
-    );
+            offset: filters.offset,
+            limit: filters.limit,
+        };
     }
 
 }

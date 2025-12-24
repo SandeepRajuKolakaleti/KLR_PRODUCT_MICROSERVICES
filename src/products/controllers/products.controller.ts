@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, Param, Delete, ParseFilePipe, FileTypeValidator, Req, Query, ParseIntPipe } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ProductsService } from '../services/products.service';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { CreateProductDto, UpdateProductDto } from '../models/dto/create-product.dto';
 import { ProductI } from '../models/product.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Multer, diskStorage } from 'multer';
+import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { Request } from 'express';
 import { PaginatedResult } from '../models/pagination.interface';
@@ -17,7 +17,7 @@ export class ProductsController {
     @UseGuards(JwtAuthGuard)
     @Post("create-product")
     @UseInterceptors(FileInterceptor('file'))
-    async createProduct(@UploadedFile() file: Multer.File, @Body() createdProductDto: CreateProductDto,@Req() request: Request): Promise<Observable<ProductI>> {
+    async createProduct(@UploadedFile() file: Express.Multer.File, @Body() createdProductDto: CreateProductDto,@Req() request: Request): Promise<Observable<ProductI>> {
         console.log(file, createdProductDto, request.body);
         return await this.productService.upload(file.originalname, file.buffer).then((data) => {
             console.log(data);
@@ -58,7 +58,7 @@ export class ProductsController {
                 new FileTypeValidator({ fileType: 'image/jpeg'})
             ]
         })
-    ) file: Multer.File) {
+    ) file: Express.Multer.File) {
         // console.log("upload data:", file);
         return this.productService.upload(file.originalname, file.buffer).then((data) => {
             console.log(data);
@@ -88,7 +88,7 @@ export class ProductsController {
             },
         }),
     )
-    async uploadExcel(@UploadedFile() file: Multer.File) {
+    async uploadExcel(@UploadedFile() file: Express.Multer.File) {
         if (!file) {
             throw new Error('No file uploaded');
         }
@@ -113,30 +113,29 @@ export class ProductsController {
 
     @UseGuards(JwtAuthGuard)
     @Get('search')
-    async searchByCategory(
+    async searchProducts(
     @Req() request: Request,
-    @Query('category', ParseIntPipe) category: number,
-    @Query('subCategory', ParseIntPipe) subCategory: number,
+    @Query('category', new ParseIntPipe({ optional: true })) category?: number,
+    @Query('subCategory', new ParseIntPipe({ optional: true })) subCategory?: number,
+    @Query('brand', new ParseIntPipe({ optional: true })) brand?: number,
     @Query('offset', new ParseIntPipe({ optional: true })) offset = 0,
     @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
     ): Promise<Observable<PaginatedResult<ProductI>>> {
         const user = request.user;
-        return this.productService.searchByCategory(
-            user,
+
+        return of(await this.productService.search({
             category,
             subCategory,
-            {
+            brand,
             offset: Number(offset),
             limit: Number(limit),
-            }
-        );
+        }));
     }
-
 
     @UseGuards(JwtAuthGuard)
     @Post('update-product')
     @UseInterceptors(FileInterceptor('file'))
-    async updateProduct(@UploadedFile() file: Multer.File, @Body() updatedProductDto: any, @Req() request: Request): Promise<Observable<ProductI>> {
+    async updateProduct(@UploadedFile() file: Express.Multer.File, @Body() updatedProductDto: any, @Req() request: Request): Promise<Observable<ProductI>> {
         console.log("Update Product DTO:", updatedProductDto);
         console.log("Request Body:", request.body);
         if (file)   {

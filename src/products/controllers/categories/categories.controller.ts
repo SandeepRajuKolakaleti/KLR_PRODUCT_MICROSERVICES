@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { CategoryI } from '../../../products/models/category.interface';
 import { CategoriesService } from '../../../products/services/categories/categories.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Multer } from 'multer';
+import { Express } from 'express';
 import { ProductsService } from '../../../products/services/products.service';
 @Controller('categories')
 export class CategoriesController {
@@ -13,7 +13,7 @@ export class CategoriesController {
     @UseGuards(JwtAuthGuard)
     @Post("create-category")
     @UseInterceptors(FileInterceptor('file'))
-    async createCategory(@UploadedFile() file: Multer.File, @Body() createdCategoryDto: CreateCategoryDto, @Req() request: Request): Promise<Observable<CategoryI>> {
+    async createCategory(@UploadedFile() file: Express.Multer.File, @Body() createdCategoryDto: CreateCategoryDto, @Req() request: Request): Promise<Observable<CategoryI>> {
         // console.log(request);
         return await this.productService.upload(file.originalname, file.buffer).then((data) => {
             console.log(data);
@@ -39,7 +39,7 @@ export class CategoriesController {
     @UseGuards(JwtAuthGuard)
     @Post('update-category')
     @UseInterceptors(FileInterceptor('file'))
-    async updateCategory(@UploadedFile() file: Multer.File, @Body() updatedCategoryDto: UpdateCategoryDto, @Req() request: Request): Promise<Observable<CategoryI>> {
+    async updateCategory(@UploadedFile() file: Express.Multer.File, @Body() updatedCategoryDto: UpdateCategoryDto, @Req() request: Request): Promise<Observable<CategoryI>> {
         console.log(file);
         if (typeof updatedCategoryDto.ThumnailImage === 'string' && updatedCategoryDto.ThumnailImage !== '')
             return this.categoryService.update(updatedCategoryDto);

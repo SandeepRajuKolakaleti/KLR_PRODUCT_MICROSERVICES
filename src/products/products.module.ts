@@ -16,19 +16,32 @@ import { ChildCategoriesController } from './controllers/child-categories/child-
 import { BrandsController } from './controllers/brands/brands.controller';
 import { ChildCategoriesService } from './services/child-categories/child-categories.service';
 import { BrandsService } from './services/brands/brands.service';
+import { AddToCartController } from './controllers/add-to-cart/add-to-cart.controller';
+import { WishListController } from './controllers/wish-list/wish-list.controller';
+import { AddToCartService } from './services/add-to-cart/add-to-cart.service';
+import { WishListService } from './services/wish-list/wish-list.service';
+import { CartEntity } from './models/cart.entity';
+import { WishlistEntity } from './models/wish-list.entity';
+import { UserService } from './services/user.service';
+import { AuthModule } from '../auth/auth.module';
+import { RedisCacheModule } from './services/redis/redis.module';
 
 @Module({
   imports: [
-    HttpModule, 
+    HttpModule,
+    AuthModule,
+    RedisCacheModule,
     TypeOrmModule.forFeature([
       ProductEntity, 
       CategoryEntity, 
       SubCategoryEntity, 
       ChildCategoryEntity, 
-      BrandEntity
+      BrandEntity,
+      CartEntity,
+      WishlistEntity
     ])
   ],
-  controllers: [ProductsController, CategoriesController, SubCategoriesController, ChildCategoriesController, BrandsController],
-  providers: [ProductsService, CategoriesService, SubCategoriesService, ChildCategoriesService, BrandsService]
+  controllers: [ProductsController, CategoriesController, SubCategoriesController, ChildCategoriesController, BrandsController, AddToCartController, WishListController],
+  providers: [ProductsService, CategoriesService, SubCategoriesService, ChildCategoriesService, BrandsService, AddToCartService, WishListService, UserService]
 })
 export class ProductsModule {}

@@ -5,7 +5,7 @@ import { CreateSubCategoryDto, UpdateSubCategoryDto } from '../../../products/mo
 import { SubCategoryI } from '../../../products/models/sub-category.interface';
 import { SubCategoriesService } from '../../../products/services/sub-categories/sub-categories.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Multer } from 'multer';
+import { Express } from 'express';
 import { ProductsService } from '../../../products/services/products.service';
 @Controller('sub-categories')
 export class SubCategoriesController {
@@ -13,7 +13,7 @@ export class SubCategoriesController {
     @UseGuards(JwtAuthGuard)
     @Post("create-subcategory")
     @UseInterceptors(FileInterceptor('file'))
-    async createSubCategory(@UploadedFile() file: Multer.File, @Body() createdSubCategoryDto: CreateSubCategoryDto): Promise<Observable<SubCategoryI>> {
+    async createSubCategory(@UploadedFile() file: Express.Multer.File, @Body() createdSubCategoryDto: CreateSubCategoryDto): Promise<Observable<SubCategoryI>> {
         return await this.productService.upload(file.originalname, file.buffer).then((data) => {
             console.log(data);
             createdSubCategoryDto.ThumnailImage = data;
@@ -36,7 +36,7 @@ export class SubCategoriesController {
     @UseGuards(JwtAuthGuard)
     @Post('update-subcategory')
     @UseInterceptors(FileInterceptor('file'))
-    async updateSubCategory(@UploadedFile() file: Multer.File, @Body() updatedSubCategoryDto: UpdateSubCategoryDto): Promise<Observable<SubCategoryI>> {
+    async updateSubCategory(@UploadedFile() file: Express.Multer.File, @Body() updatedSubCategoryDto: UpdateSubCategoryDto): Promise<Observable<SubCategoryI>> {
         if (typeof updatedSubCategoryDto.ThumnailImage === 'string' && updatedSubCategoryDto.ThumnailImage !== '')
             return this.subCategoryService.update(updatedSubCategoryDto);
         else {

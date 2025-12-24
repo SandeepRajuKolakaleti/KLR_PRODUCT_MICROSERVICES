@@ -5,7 +5,7 @@ import { BrandI } from '../../../products/models/brand.interface';
 import { CreateBrandDto, UpdateBrandDto } from '../../../products/models/dto/brand.dto';
 import { BrandsService } from '../../../products/services/brands/brands.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Multer } from 'multer';
+import { Express } from 'express';
 import { ProductsService } from '../../../products/services/products.service';
 
 @Controller('brands')
@@ -14,7 +14,7 @@ export class BrandsController {
     @UseGuards(JwtAuthGuard)
     @Post("create-brand")
     @UseInterceptors(FileInterceptor('file'))
-    async create(@UploadedFile() file: Multer.File, @Body() createdBrandDto: CreateBrandDto, @Req() request: Request): Promise<Observable<BrandI>> {
+    async create(@UploadedFile() file: Express.Multer.File, @Body() createdBrandDto: CreateBrandDto, @Req() request: Request): Promise<Observable<BrandI>> {
         return await this.productService.upload(file.originalname, file.buffer).then((data) => {
             console.log(data);
             createdBrandDto.ThumnailImage = data;
@@ -40,7 +40,7 @@ export class BrandsController {
     @UseGuards(JwtAuthGuard)
     @Post('update-brand')
     @UseInterceptors(FileInterceptor('file'))
-    async update(@UploadedFile() file: Multer.File, @Body() updatedBrandDto: UpdateBrandDto, @Req() request: Request): Promise<Observable<BrandI>> {
+    async update(@UploadedFile() file: Express.Multer.File, @Body() updatedBrandDto: UpdateBrandDto, @Req() request: Request): Promise<Observable<BrandI>> {
         if (typeof updatedBrandDto.ThumnailImage === 'string' && updatedBrandDto.ThumnailImage !== '')
             return this.brandsService.update(updatedBrandDto);
         else {
