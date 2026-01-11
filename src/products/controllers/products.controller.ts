@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, Param, Delete, ParseFilePipe, FileTypeValidator, Req, Query, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, Param, Delete, ParseFilePipe, FileTypeValidator, Req, Query, ParseIntPipe, ParseArrayPipe } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ProductsService } from '../services/products.service';
 import { Observable, of } from 'rxjs';
@@ -161,6 +161,15 @@ export class ProductsController {
         }
         return this.productService.updateproduct(updatedProductDto);
         // AppConstants.app.xyz
+    }
+
+    @Get('product/get-by-ids')
+    async getProductsByIds(@Query(
+        'ids',
+        new ParseArrayPipe({ items: Number, separator: ',' })
+    ) ids: number[]): Promise<any> {
+        const idArray = ids.map(id => Number(id));
+        return this.productService.getProductsByIds(idArray);
     }
 
     @UseGuards(JwtAuthGuard)

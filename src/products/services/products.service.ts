@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductDto, UpdateProductDto } from '../models/dto/create-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from '../models/product.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { from, map, Observable, of, switchMap } from 'rxjs';
 import { ProductI } from '../models/product.interface';
 import * as XLSX from 'xlsx';
@@ -247,6 +247,16 @@ export class ProductsService {
     findOne(Id: number): Observable<any> {
         return from(this.productRepository.findOne({
             where: {Id},
+            select: [
+                'Id', 'Name', 'ThumnailImage', 'Category', 'SubCategory', 'Brand', 'SKU', 'Slug', 'Price', 'OfferPrice', 'StockQuantity', 
+                'Weight', 'ShortDescription', 'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 'Specifications', 'Highlight', 'Vendor'
+            ]
+        }));
+    }
+
+    getProductsByIds(Ids: number[]): Observable<any> {
+        return from(this.productRepository.find({
+            where: { Id: In(Ids) },
             select: [
                 'Id', 'Name', 'ThumnailImage', 'Category', 'SubCategory', 'Brand', 'SKU', 'Slug', 'Price', 'OfferPrice', 'StockQuantity', 
                 'Weight', 'ShortDescription', 'LongDescription', 'Status', 'SEOTitle', 'SEODescription', 'Specifications', 'Highlight', 'Vendor'
