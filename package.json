@@ -50,6 +50,7 @@
     "mocha": "^10.2.0",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.6.0",
+    "nestjs-razorpay": "^2.0.1",
     "node-cache": "^5.1.2",
     "nodemailer": "^6.9.9",
     "nodemailer-ntlm-auth": "^1.0.1",
