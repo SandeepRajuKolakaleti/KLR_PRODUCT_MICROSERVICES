@@ -103,6 +103,15 @@ export class ProductsService {
         return of(updatedProduct);
     }
 
+    async decreaseStock(productId: string, quantity: number): Promise<void> {
+        const product = await this.productRepository.findOne({ where: { Id: Number(productId) } });
+        if (product && product.StockQuantity >= quantity) {
+            const updatedData = { Id: product.Id, StockQuantity: product.StockQuantity - quantity };
+            await this.productRepository.update({ Id: product.Id },
+                { StockQuantity: product.StockQuantity - quantity });
+        }
+    }
+
     getAllProducts(user, pagination: Pagination): Observable<PaginatedResult<ProductI>> {
         if (user.userRole === AppConstants.app.userType.admin) {
             console.log("Applying user-specific filtering for:", user.Username);
