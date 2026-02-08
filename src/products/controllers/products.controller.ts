@@ -9,6 +9,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { Request } from 'express';
 import { PaginatedResult } from '../models/pagination.interface';
+import { AppConstants } from 'src/app.constants';
 
 @Controller('products')
 export class ProductsController {
@@ -176,6 +177,30 @@ export class ProductsController {
     @Get('product/:id')
     async info(@Param('id') id: number): Promise<any> {
       return this.productService.findOne(id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('best-products')
+    async getBestProducts(): Promise<any> {
+      return this.productService.getProductsByHighlight(AppConstants.app.highlight.BestProduct);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('top-products')
+    async getTopProducts(): Promise<any> {
+        return this.productService.getProductsByHighlight(AppConstants.app.highlight.TopProduct);
+    }
+    
+    @UseGuards(JwtAuthGuard)
+    @Get('new-arrival')
+    async NewArrival(): Promise<any> {
+      return this.productService.getProductsByHighlight(AppConstants.app.highlight.NewArrival);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('featured-products')
+    async FeaturedProduct(): Promise<any> {
+      return this.productService.getProductsByHighlight(AppConstants.app.highlight.FeaturedProduct);
     }
 
     @UseGuards(JwtAuthGuard)

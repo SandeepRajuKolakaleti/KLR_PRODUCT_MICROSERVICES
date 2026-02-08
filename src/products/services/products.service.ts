@@ -12,6 +12,12 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { AppConstants } from '../../app.constants';
 import { PaginatedResult, Pagination } from '../models/pagination.interface';
 
+export enum Highlight {
+    BestProduct = "Best Product",
+    TopProduct = "Top Product",
+    NewArrival = "New Arrival",
+    FeaturedProduct = "Featured Product"
+}
 @Injectable()
 export class ProductsService {
     public readonly s3Client;
@@ -272,6 +278,29 @@ export class ProductsService {
             ]
         }));
     }
+
+    async getProductsByHighlight(key: string): Promise<ProductEntity[]> {
+        const products = await this.productRepository
+        .createQueryBuilder('product')
+        .where(
+            `
+            JSON_EXTRACT(
+            CAST(
+                JSON_UNQUOTE(
+                JSON_UNQUOTE(product.Highlight)
+                ) AS JSON
+            ),
+            '$.${key}'
+            ) = true
+            `
+        )
+        .andWhere('product.Status = :status', { status: 1 })
+        .orderBy('product.updatedAt', 'DESC')
+        .limit(3)
+        .getMany();
+        return products;
+    }
+
 
     async deleteProduct(Id: number) {
         const product = await this.productRepository.findOne({ where: { Id } });

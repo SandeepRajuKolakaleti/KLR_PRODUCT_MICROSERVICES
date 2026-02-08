@@ -23,6 +23,12 @@ export class AppConstants {
         status: {
             active: 1,
             inactive: 0
+        },
+        highlight: {
+            BestProduct: 'BestProduct',
+            TopProduct: 'TopProduct',
+            NewArrival: 'NewArrival',
+            FeaturedProduct: 'FeaturedProduct'
         }
     };
 
